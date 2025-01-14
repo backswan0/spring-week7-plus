@@ -13,7 +13,8 @@ public class CommentSaveResponseDto {
 
     public CommentSaveResponseDto(
         Comment comment,
-        UserResponseDto user) {
+        UserResponseDto user
+    ) {
         this.id = comment.getId();
         this.contents = comment.getContents();
         this.user = user;

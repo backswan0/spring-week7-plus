@@ -1,6 +1,7 @@
 package org.example.expert.domain.manager.dto.response;
 
 import lombok.Getter;
+import org.example.expert.domain.manager.entity.Manager;
 import org.example.expert.domain.user.dto.response.UserResponseDto;
 
 @Getter
@@ -10,10 +11,10 @@ public class ManagerSaveResponseDto {
     private final UserResponseDto user;
 
     public ManagerSaveResponseDto(
-        Long id,
+        Manager manager,
         UserResponseDto user
     ) {
-        this.id = id;
+        this.id = manager.getId();
         this.user = user;
     }
 }

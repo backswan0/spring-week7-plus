@@ -1,6 +1,7 @@
 package org.example.expert.domain.user.dto.response;
 
 import lombok.Getter;
+import org.example.expert.domain.user.entity.User;
 
 @Getter
 public class UserResponseDto {
@@ -9,10 +10,9 @@ public class UserResponseDto {
     private final String email;
 
     public UserResponseDto(
-        Long id,
-        String email
+        User user
     ) {
-        this.id = id;
-        this.email = email;
+        this.id = user.getId();
+        this.email = user.getEmail();
     }
 }
