@@ -10,7 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.expert.domain.common.dto.AuthUser;
+import org.example.expert.domain.common.dto.AuthUserDto;
 import org.example.expert.domain.common.entity.Timestamped;
 import org.example.expert.domain.user.enums.UserRole;
 
@@ -49,7 +49,7 @@ public class User extends Timestamped {
         this.userRole = userRole;
     }
 
-    public static User fromAuthUser(AuthUser authUser) {
+    public static User fromAuthUser(AuthUserDto authUser) {
         return new User(
             authUser.getId(),
             authUser.getEmail(),
@@ -57,7 +57,7 @@ public class User extends Timestamped {
         );
     }
 
-    public void changePassword(String password) {
+    public void updatePassword(String password) {
         this.password = password;
     }
 
