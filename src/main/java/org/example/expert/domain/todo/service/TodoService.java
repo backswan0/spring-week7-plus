@@ -1,5 +1,6 @@
 package org.example.expert.domain.todo.service;
 
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.example.expert.client.WeatherClient;
 import org.example.expert.domain.common.dto.AuthUserDto;
@@ -49,6 +50,8 @@ public class TodoService {
     @Transactional(readOnly = true)
     public Page<TodoResponseDto> getAllTodos(
         String weather,
+        LocalDateTime startsAt,
+        LocalDateTime endsAt,
         int page,
         int size
     ) {
@@ -60,6 +63,21 @@ public class TodoService {
         if (weather != null) {
             Page<Todo> todoPage = todoRepository.findAllByWeather(
                 weather,
+                pageable
+            );
+
+            return todoPage.map(
+                todo -> new TodoResponseDto(
+                    todo,
+                    new UserResponseDto(todo.getUser())
+                )
+            );
+        }
+
+        if (startsAt != null || endsAt != null) {
+            Page<Todo> todoPage = todoRepository.findAllByUpdatedAtBetween(
+                startsAt,
+                endsAt,
                 pageable
             );
 
