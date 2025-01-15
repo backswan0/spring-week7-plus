@@ -4,14 +4,14 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
 @Getter
-public class UserChangePasswordRequestDto {
+public class UserPasswordUpdateRequestDto {
 
     @NotBlank
     private final String oldPassword;
     @NotBlank
     private final String newPassword;
 
-    public UserChangePasswordRequestDto(
+    public UserPasswordUpdateRequestDto(
         String oldPassword,
         String newPassword
     ) {

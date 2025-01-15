@@ -3,7 +3,7 @@ package org.example.expert.domain.user.service;
 import lombok.RequiredArgsConstructor;
 import org.example.expert.config.PasswordEncoder;
 import org.example.expert.domain.common.exception.InvalidRequestException;
-import org.example.expert.domain.user.dto.request.UserChangePasswordRequestDto;
+import org.example.expert.domain.user.dto.request.UserPasswordUpdateRequestDto;
 import org.example.expert.domain.user.dto.response.UserResponseDto;
 import org.example.expert.domain.user.entity.User;
 import org.example.expert.domain.user.repository.UserRepository;
@@ -28,7 +28,7 @@ public class UserService {
     @Transactional
     public void updatePassword(
         long userId,
-        UserChangePasswordRequestDto requestDto
+        UserPasswordUpdateRequestDto requestDto
     ) {
         validateNewPassword(requestDto);
 
@@ -50,10 +50,10 @@ public class UserService {
     }
 
     private static void validateNewPassword(
-        UserChangePasswordRequestDto userChangePasswordRequestDto) {
-        if (userChangePasswordRequestDto.getNewPassword().length() < 8 ||
-            !userChangePasswordRequestDto.getNewPassword().matches(".*\\d.*") ||
-            !userChangePasswordRequestDto.getNewPassword().matches(".*[A-Z].*")) {
+        UserPasswordUpdateRequestDto userPasswordUpdateRequestDto) {
+        if (userPasswordUpdateRequestDto.getNewPassword().length() < 8 ||
+            !userPasswordUpdateRequestDto.getNewPassword().matches(".*\\d.*") ||
+            !userPasswordUpdateRequestDto.getNewPassword().matches(".*[A-Z].*")) {
             throw new InvalidRequestException("새 비밀번호는 8자 이상이어야 하고, 숫자와 대문자를 포함해야 합니다.");
         }
     }

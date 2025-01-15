@@ -5,12 +5,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.example.expert.domain.common.dto.AuthUserDto;
+import org.example.expert.SharedData;
 import org.example.expert.domain.common.exception.InvalidRequestException;
+import org.example.expert.domain.todo.dto.response.TodoResponseDto;
 import org.example.expert.domain.todo.service.TodoService;
-import org.example.expert.domain.user.dto.response.UserResponseDto;
-import org.example.expert.domain.user.entity.User;
-import org.example.expert.domain.user.enums.UserRole;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -30,24 +29,15 @@ class TodoControllerTest {
     @Test
     void todo_단건_조회에_성공한다() throws Exception {
         // given
-        long todoId = 1L;
-        String title = "title";
-        AuthUserDto authUser = new AuthUserDto(1L, "email", UserRole.USER);
-        User user = User.fromAuthUser(authUser);
-        UserResponseDto userResponseDto = new UserResponseDto(user.getId(), user.getEmail());
-//        TodoResponseDto response = new TodoResponseDto(
-//                todoId,
-//                title,
-//                "contents",
-//                "Sunny",
-//                userResponse,
-//                LocalDateTime.now(),
-//                LocalDateTime.now()
-//        );
+        long todoId = SharedData.TODO.getId();
+        String title = SharedData.TODO.getTitle();
+        TodoResponseDto responseDto = new TodoResponseDto(
+            SharedData.TODO,
+            SharedData.USER_RESPONSE_DTO
+        );
 
         // when
-//        when(todoService.getTodo(todoId)).thenReturn(response);
-        // todo
+        when(todoService.getTodoById(todoId)).thenReturn(responseDto);
 
         // then
         mockMvc.perform(get("/todos/{todoId}", todoId))
@@ -59,7 +49,7 @@ class TodoControllerTest {
     @Test
     void todo_단건_조회_시_todo가_존재하지_않아_예외가_발생한다() throws Exception {
         // given
-        long todoId = 1L;
+        long todoId = 2L;
 
         // when
         when(todoService.getTodoById(todoId))
@@ -67,9 +57,9 @@ class TodoControllerTest {
 
         // then
         mockMvc.perform(get("/todos/{todoId}", todoId))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.status").value(HttpStatus.OK.name()))
-            .andExpect(jsonPath("$.code").value(HttpStatus.OK.value()))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.name()))
+            .andExpect(jsonPath("$.code").value(HttpStatus.BAD_REQUEST.value()))
             .andExpect(jsonPath("$.message").value("Todo not found"));
     }
 }

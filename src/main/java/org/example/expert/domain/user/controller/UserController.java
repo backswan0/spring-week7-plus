@@ -3,7 +3,7 @@ package org.example.expert.domain.user.controller;
 import lombok.RequiredArgsConstructor;
 import org.example.expert.domain.common.annotation.Auth;
 import org.example.expert.domain.common.dto.AuthUserDto;
-import org.example.expert.domain.user.dto.request.UserChangePasswordRequestDto;
+import org.example.expert.domain.user.dto.request.UserPasswordUpdateRequestDto;
 import org.example.expert.domain.user.dto.response.UserResponseDto;
 import org.example.expert.domain.user.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -32,7 +32,7 @@ public class UserController {
     @PutMapping("/users")
     public ResponseEntity<Void> changePassword(
         @Auth AuthUserDto authUser,
-        @RequestBody UserChangePasswordRequestDto requestDto
+        @RequestBody UserPasswordUpdateRequestDto requestDto
     ) {
 
         userService.updatePassword(
