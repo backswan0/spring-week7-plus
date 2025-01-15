@@ -1,10 +1,10 @@
 package org.example.expert.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.expert.common.exception.InvalidRequestException;
-import org.example.expert.domain.user.dto.request.UserRoleUpdateRequestDto;
 import org.example.expert.common.entity.User;
 import org.example.expert.common.enums.UserRole;
+import org.example.expert.common.exception.notfound.TodoNotFoundException;
+import org.example.expert.domain.user.dto.request.UserRoleUpdateRequestDto;
 import org.example.expert.domain.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +21,7 @@ public class UserAdminService {
         UserRoleUpdateRequestDto requestDto
     ) {
         User foundUser = userRepository.findById(userId)
-            .orElseThrow(() -> new InvalidRequestException("User not found"));
+            .orElseThrow(TodoNotFoundException::new);
 
         foundUser.updateRole(UserRole.of(requestDto.userRole()));
     }

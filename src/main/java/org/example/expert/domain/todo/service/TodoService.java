@@ -4,14 +4,14 @@ import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.example.expert.client.WeatherClient;
 import org.example.expert.common.dto.AuthUserDto;
-import org.example.expert.common.exception.InvalidRequestException;
+import org.example.expert.common.entity.Todo;
+import org.example.expert.common.entity.User;
+import org.example.expert.common.exception.notfound.TodoNotFoundException;
 import org.example.expert.domain.todo.dto.request.TodoSaveRequestDto;
 import org.example.expert.domain.todo.dto.response.TodoResponseDto;
 import org.example.expert.domain.todo.dto.response.TodoSaveResponseDto;
-import org.example.expert.common.entity.Todo;
 import org.example.expert.domain.todo.repository.TodoRepository;
 import org.example.expert.domain.user.dto.response.UserResponseDto;
-import org.example.expert.common.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -102,9 +102,7 @@ public class TodoService {
     @Transactional(readOnly = true)
     public TodoResponseDto getTodoById(long todoId) {
         Todo foundTodo = todoRepository.findByIdWithUser(todoId)
-            .orElseThrow(
-                () -> new InvalidRequestException("Todo not found")
-            );
+            .orElseThrow(TodoNotFoundException::new);
 
         return new TodoResponseDto(
             foundTodo,

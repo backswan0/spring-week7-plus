@@ -2,10 +2,11 @@ package org.example.expert.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.expert.common.config.PasswordEncoder;
+import org.example.expert.common.entity.User;
 import org.example.expert.common.exception.InvalidRequestException;
+import org.example.expert.common.exception.notfound.UserNotFoundException;
 import org.example.expert.domain.user.dto.request.UserPasswordUpdateRequestDto;
 import org.example.expert.domain.user.dto.response.UserResponseDto;
-import org.example.expert.common.entity.User;
 import org.example.expert.domain.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +21,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserResponseDto getUserById(long userId) {
         User foundUser = userRepository.findById(userId)
-            .orElseThrow(() -> new InvalidRequestException("User not found"));
+            .orElseThrow(UserNotFoundException::new);
 
         return new UserResponseDto(foundUser);
     }
@@ -33,7 +34,7 @@ public class UserService {
         validateNewPassword(requestDto);
 
         User foundUser = userRepository.findById(userId)
-            .orElseThrow(() -> new InvalidRequestException("User not found"));
+            .orElseThrow(UserNotFoundException::new);
 
         if (passwordEncoder.matches(requestDto.getNewPassword(),
             foundUser.getPassword())) {
