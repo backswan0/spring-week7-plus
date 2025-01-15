@@ -1,13 +1,5 @@
 package org.example.expert.domain.user.dto.request;
 
-import lombok.Getter;
+public record UserRoleUpdateRequestDto(String userRole) {
 
-@Getter
-public class UserRoleUpdateRequestDto {
-
-    private final String userRole;
-
-    public UserRoleUpdateRequestDto(String userRole) {
-        this.userRole = userRole;
-    }
 }
