@@ -2,7 +2,7 @@ package org.example.expert.domain.todo.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.expert.client.WeatherClient;
-import org.example.expert.domain.common.dto.AuthUser;
+import org.example.expert.domain.common.dto.AuthUserDto;
 import org.example.expert.domain.common.exception.InvalidRequestException;
 import org.example.expert.domain.todo.dto.request.TodoSaveRequestDto;
 import org.example.expert.domain.todo.dto.response.TodoResponseDto;
@@ -26,10 +26,10 @@ public class TodoService {
 
     @Transactional
     public TodoSaveResponseDto saveTodo(
-        AuthUser authUser,
+        AuthUserDto authUserDto,
         TodoSaveRequestDto requestDto
     ) {
-        User user = User.fromAuthUser(authUser);
+        User user = User.fromAuthUser(authUserDto);
 
         String weather = weatherClient.getTodayWeather();
 
@@ -43,10 +43,7 @@ public class TodoService {
 
         return new TodoSaveResponseDto(
             savedTodo,
-            new UserResponseDto(
-                user.getId(),
-                user.getEmail())
-        );
+            new UserResponseDto(user));
     }
 
     @Transactional(readOnly = true)
@@ -58,17 +55,12 @@ public class TodoService {
 
         Page<Todo> todoPage = todoRepository.findAllByOrderByModifiedAtDesc(pageable);
 
-        Page<TodoResponseDto> todoResponseDtoPage = todoPage.map(
+        return todoPage.map(
             todo -> new TodoResponseDto(
                 todo,
-                new UserResponseDto(
-                    todo.getUser().getId(),
-                    todo.getUser().getEmail()
-                )
+                new UserResponseDto(todo.getUser())
             )
         );
-
-        return todoResponseDtoPage;
     }
 
     @Transactional(readOnly = true)
@@ -76,14 +68,11 @@ public class TodoService {
         Todo foundTodo = todoRepository.findByIdWithUser(todoId)
             .orElseThrow(
                 () -> new InvalidRequestException("Todo not found")
-            ); // todo 예외 처리
+            );
 
         return new TodoResponseDto(
             foundTodo,
-            new UserResponseDto(
-                foundTodo.getUser().getId(),
-                foundTodo.getUser().getEmail()
-            )
+            new UserResponseDto(foundTodo.getUser())
         );
     }
 }

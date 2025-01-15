@@ -3,7 +3,7 @@ package org.example.expert.domain.todo.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.expert.domain.common.annotation.Auth;
-import org.example.expert.domain.common.dto.AuthUser;
+import org.example.expert.domain.common.dto.AuthUserDto;
 import org.example.expert.domain.todo.dto.request.TodoSaveRequestDto;
 import org.example.expert.domain.todo.dto.response.TodoResponseDto;
 import org.example.expert.domain.todo.dto.response.TodoSaveResponseDto;
@@ -26,11 +26,11 @@ public class TodoController {
 
     @PostMapping("/todos")
     public ResponseEntity<TodoSaveResponseDto> saveTodo(
-        @Auth AuthUser authUser,
+        @Auth AuthUserDto authUserDto,
         @Valid @RequestBody TodoSaveRequestDto requestDto
     ) {
         TodoSaveResponseDto responseDto = todoService.saveTodo(
-            authUser,
+            authUserDto,
             requestDto
         );
 
