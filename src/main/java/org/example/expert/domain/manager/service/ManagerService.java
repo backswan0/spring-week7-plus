@@ -4,16 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.expert.common.dto.AuthUserDto;
+import org.example.expert.common.entity.Manager;
+import org.example.expert.common.entity.Todo;
+import org.example.expert.common.entity.User;
 import org.example.expert.common.exception.InvalidRequestException;
+import org.example.expert.common.exception.notfound.TodoNotFoundException;
 import org.example.expert.domain.manager.dto.request.ManagerSaveRequestDto;
 import org.example.expert.domain.manager.dto.response.ManagerResponseDto;
 import org.example.expert.domain.manager.dto.response.ManagerSaveResponseDto;
-import org.example.expert.common.entity.Manager;
 import org.example.expert.domain.manager.repository.ManagerRepository;
-import org.example.expert.common.entity.Todo;
 import org.example.expert.domain.todo.repository.TodoRepository;
 import org.example.expert.domain.user.dto.response.UserResponseDto;
-import org.example.expert.common.entity.User;
 import org.example.expert.domain.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +38,7 @@ public class ManagerService {
         User user = User.fromAuthUser(authUser);
 
         Todo foundTodo = todoRepository.findById(todoId)
-            .orElseThrow(() -> new InvalidRequestException("Todo not found"));
+            .orElseThrow(TodoNotFoundException::new);
 
         if (foundTodo.getUser() == null || !ObjectUtils.nullSafeEquals(user.getId(),
             foundTodo.getUser().getId())) {
@@ -67,7 +68,7 @@ public class ManagerService {
     @Transactional(readOnly = true)
     public List<ManagerResponseDto> getAllManagers(long todoId) {
         Todo foundTodo = todoRepository.findById(todoId)
-            .orElseThrow(() -> new InvalidRequestException("Todo not found"));
+            .orElseThrow(TodoNotFoundException::new);
 
         List<Manager> managerList = new ArrayList<>();
 
@@ -94,7 +95,7 @@ public class ManagerService {
         User user = User.fromAuthUser(authUser);
 
         Todo fooundTodo = todoRepository.findById(todoId)
-            .orElseThrow(() -> new InvalidRequestException("Todo not found"));
+            .orElseThrow(TodoNotFoundException::new);
 
         if (fooundTodo.getUser() == null || !ObjectUtils.nullSafeEquals(user.getId(),
             fooundTodo.getUser().getId())) {
