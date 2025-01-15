@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum ErrorCode {
+    MISMATCH_PASSWORD(HttpStatus.UNAUTHORIZED, "ERRMM01", "Password does not match"),
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "ERRNF01", "User is not found"),
     NOT_FOUND_TODO(HttpStatus.NOT_FOUND, "ERRNF02", "Todo is not found");
 
