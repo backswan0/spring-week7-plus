@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import org.example.expert.common.exception.mismatch.MismatchException;
 import org.example.expert.common.exception.notfound.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Map<String, String>> handleNotFoundException(
         NotFoundException ex
+    ) {
+        return handleException(
+            ex.getErrorCode().getCode(),
+            ex.getErrorCode().getMessage(),
+            ex.getErrorCode().getStatus()
+        );
+    }
+
+    @ExceptionHandler(MismatchException.class)
+    public ResponseEntity<Map<String, String>> handleMismatchException(
+        MismatchException ex
     ) {
         return handleException(
             ex.getErrorCode().getCode(),

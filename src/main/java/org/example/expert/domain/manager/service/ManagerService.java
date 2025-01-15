@@ -8,6 +8,8 @@ import org.example.expert.common.entity.Manager;
 import org.example.expert.common.entity.Todo;
 import org.example.expert.common.entity.User;
 import org.example.expert.common.exception.InvalidRequestException;
+import org.example.expert.common.exception.mismatch.ManagerMismatchException;
+import org.example.expert.common.exception.mismatch.UserMismatchException;
 import org.example.expert.common.exception.notfound.ManagerNotFoundException;
 import org.example.expert.common.exception.notfound.TodoNotFoundException;
 import org.example.expert.common.exception.notfound.UserNotFoundException;
@@ -48,7 +50,7 @@ public class ManagerService {
         );
 
         if (isUserMismatch) {
-            throw new InvalidRequestException("User does not match the creator of the todo");
+            throw new UserMismatchException();
         }
 
         User managerToRegister = userRepository.findById(requestDto.getManagerUserId())
@@ -110,14 +112,18 @@ public class ManagerService {
         );
 
         if (isUserMismatch) {
-            throw new InvalidRequestException("User does not match the creator of the todo");
+            throw new UserMismatchException();
         }
 
         Manager foundManager = managerRepository.findById(managerId)
             .orElseThrow(ManagerNotFoundException::new);
 
-        if (!ObjectUtils.nullSafeEquals(foundTodo.getId(), foundManager.getTodo().getId())) {
-            throw new InvalidRequestException("해당 일정에 등록된 담당자가 아닙니다.");
+        boolean isManagerMismatch = !ObjectUtils.nullSafeEquals(
+            foundTodo.getId(),
+            foundManager.getTodo().getId());
+
+        if (isManagerMismatch) {
+            throw new ManagerMismatchException();
         }
 
         managerRepository.delete(foundManager);
