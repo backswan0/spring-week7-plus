@@ -17,13 +17,18 @@ public class SignUpRequestDto {
     @NotBlank
     private final String userRole;
 
+    @NotBlank
+    private final String nickname;
+
     public SignUpRequestDto(
         String email,
         String password,
-        String userRole
+        String userRole,
+        String nickname
     ) {
         this.email = email;
         this.password = password;
         this.userRole = userRole;
+        this.nickname = nickname;
     }
 }
