@@ -3,17 +3,17 @@ package org.example.expert.domain.comment.service;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.example.expert.common.dto.AuthUserDto;
+import org.example.expert.common.entity.Comment;
+import org.example.expert.common.entity.Todo;
+import org.example.expert.common.entity.User;
+import org.example.expert.common.exception.notfound.TodoNotFoundException;
 import org.example.expert.domain.comment.dto.request.CommentSaveRequestDto;
 import org.example.expert.domain.comment.dto.response.CommentResponseDto;
 import org.example.expert.domain.comment.dto.response.CommentSaveResponseDto;
-import org.example.expert.common.entity.Comment;
 import org.example.expert.domain.comment.repository.CommentRepository;
-import org.example.expert.common.dto.AuthUserDto;
-import org.example.expert.common.exception.InvalidRequestException;
-import org.example.expert.common.entity.Todo;
 import org.example.expert.domain.todo.repository.TodoRepository;
 import org.example.expert.domain.user.dto.response.UserResponseDto;
-import org.example.expert.common.entity.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,16 +25,20 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     @Transactional
-    public CommentSaveResponseDto saveComment(AuthUserDto authUser, long todoId,
-        CommentSaveRequestDto commentSaveRequestDto) {
+    public CommentSaveResponseDto saveComment(
+        AuthUserDto authUser,
+        long todoId,
+        CommentSaveRequestDto requestDto
+    ) {
         User user = User.fromAuthUser(authUser);
-        Todo todo = todoRepository.findById(todoId).orElseThrow(() ->
-            new InvalidRequestException("Todo not found"));
+
+        Todo foundTodo = todoRepository.findById(todoId)
+            .orElseThrow(TodoNotFoundException::new);
 
         Comment newComment = new Comment(
-            commentSaveRequestDto.getContents(),
+            requestDto.getContents(),
             user,
-            todo
+            foundTodo
         );
 
         Comment savedComment = commentRepository.save(newComment);
