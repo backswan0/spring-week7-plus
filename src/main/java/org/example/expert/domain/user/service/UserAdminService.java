@@ -23,6 +23,6 @@ public class UserAdminService {
         User foundUser = userRepository.findById(userId)
             .orElseThrow(() -> new InvalidRequestException("User not found"));
 
-        foundUser.updateRole(UserRole.of(requestDto.getUserRole()));
+        foundUser.updateRole(UserRole.of(requestDto.userRole()));
     }
 }
