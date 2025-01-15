@@ -47,13 +47,31 @@ public class TodoService {
     }
 
     @Transactional(readOnly = true)
-    public Page<TodoResponseDto> getAllTodos(int page, int size) {
+    public Page<TodoResponseDto> getAllTodos(
+        String weather,
+        int page,
+        int size
+    ) {
         Pageable pageable = PageRequest.of(
             Math.max(page - 1, 0),
             size
         );
 
-        Page<Todo> todoPage = todoRepository.findAllByOrderByModifiedAtDesc(pageable);
+        if (weather != null) {
+            Page<Todo> todoPage = todoRepository.findAllByWeather(
+                weather,
+                pageable
+            );
+
+            return todoPage.map(
+                todo -> new TodoResponseDto(
+                    todo,
+                    new UserResponseDto(todo.getUser())
+                )
+            );
+        }
+
+        Page<Todo> todoPage = todoRepository.findAllByOrderByUpdatedAtDesc(pageable);
 
         return todoPage.map(
             todo -> new TodoResponseDto(

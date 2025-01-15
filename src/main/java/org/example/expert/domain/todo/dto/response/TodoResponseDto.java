@@ -26,6 +26,6 @@ public class TodoResponseDto {
         this.weather = todo.getWeather();
         this.user = user;
         this.createdAt = todo.getCreatedAt();
-        this.updatedAt = todo.getModifiedAt();
+        this.updatedAt = todo.getUpdatedAt();
     }
 }
