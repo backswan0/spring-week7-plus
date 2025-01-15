@@ -1,8 +1,8 @@
 package org.example.expert.domain.user.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.expert.domain.common.annotation.Auth;
-import org.example.expert.domain.common.dto.AuthUserDto;
+import org.example.expert.common.annotation.Auth;
+import org.example.expert.common.dto.AuthUserDto;
 import org.example.expert.domain.user.dto.request.UserPasswordUpdateRequestDto;
 import org.example.expert.domain.user.dto.response.UserResponseDto;
 import org.example.expert.domain.user.service.UserService;

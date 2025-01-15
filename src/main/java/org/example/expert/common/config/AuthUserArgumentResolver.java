@@ -1,10 +1,10 @@
-package org.example.expert.config;
+package org.example.expert.common.config;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.example.expert.domain.auth.exception.AuthException;
-import org.example.expert.domain.common.annotation.Auth;
-import org.example.expert.domain.common.dto.AuthUserDto;
-import org.example.expert.domain.user.enums.UserRole;
+import org.example.expert.common.exception.AuthException;
+import org.example.expert.common.annotation.Auth;
+import org.example.expert.common.dto.AuthUserDto;
+import org.example.expert.common.enums.UserRole;
 import org.springframework.core.MethodParameter;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.support.WebDataBinderFactory;
