@@ -1,6 +1,7 @@
 package org.example.expert.domain.todo.controller;
 
 import jakarta.validation.Valid;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.example.expert.domain.common.annotation.Auth;
 import org.example.expert.domain.common.dto.AuthUserDto;
@@ -39,12 +40,16 @@ public class TodoController {
 
     @GetMapping("/todos")
     public ResponseEntity<Page<TodoResponseDto>> getAllTodos(
+        @RequestParam(required = false) String weather,
+        @RequestParam(required = false) LocalDateTime startsAt,
+        @RequestParam(required = false) LocalDateTime endsAt,
         @RequestParam(defaultValue = "1") int page,
-        @RequestParam(defaultValue = "10") int size,
-        @RequestParam(required = false) String weather
+        @RequestParam(defaultValue = "10") int size
     ) {
         Page<TodoResponseDto> todoResponseDtoPage = todoService.getAllTodos(
             weather,
+            startsAt,
+            endsAt,
             page,
             size
         );
