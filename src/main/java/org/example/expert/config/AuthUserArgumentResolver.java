@@ -3,7 +3,7 @@ package org.example.expert.config;
 import jakarta.servlet.http.HttpServletRequest;
 import org.example.expert.domain.auth.exception.AuthException;
 import org.example.expert.domain.common.annotation.Auth;
-import org.example.expert.domain.common.dto.AuthUser;
+import org.example.expert.domain.common.dto.AuthUserDto;
 import org.example.expert.domain.user.enums.UserRole;
 import org.springframework.core.MethodParameter;
 import org.springframework.lang.Nullable;
@@ -17,7 +17,7 @@ public class AuthUserArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         boolean hasAuthAnnotation = parameter.getParameterAnnotation(Auth.class) != null;
-        boolean isAuthUserType = parameter.getParameterType().equals(AuthUser.class);
+        boolean isAuthUserType = parameter.getParameterType().equals(AuthUserDto.class);
 
         // @Auth 어노테이션과 AuthUser 타입이 함께 사용되지 않은 경우 예외 발생
         if (hasAuthAnnotation != isAuthUserType) {
@@ -29,10 +29,10 @@ public class AuthUserArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public Object resolveArgument(
-            @Nullable MethodParameter parameter,
-            @Nullable ModelAndViewContainer mavContainer,
-            NativeWebRequest webRequest,
-            @Nullable WebDataBinderFactory binderFactory
+        @Nullable MethodParameter parameter,
+        @Nullable ModelAndViewContainer mavContainer,
+        NativeWebRequest webRequest,
+        @Nullable WebDataBinderFactory binderFactory
     ) {
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
 
@@ -41,6 +41,6 @@ public class AuthUserArgumentResolver implements HandlerMethodArgumentResolver {
         String email = (String) request.getAttribute("email");
         UserRole userRole = UserRole.of((String) request.getAttribute("userRole"));
 
-        return new AuthUser(userId, email, userRole);
+        return new AuthUserDto(userId, email, userRole);
     }
 }
