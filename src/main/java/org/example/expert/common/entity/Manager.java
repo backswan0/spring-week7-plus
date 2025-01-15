@@ -1,4 +1,4 @@
-package org.example.expert.domain.manager.entity;
+package org.example.expert.common.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -10,8 +10,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.expert.domain.todo.entity.Todo;
-import org.example.expert.domain.user.entity.User;
 
 @Getter
 @Entity

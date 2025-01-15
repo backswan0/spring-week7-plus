@@ -1,11 +1,11 @@
 package org.example.expert;
 
 import java.time.LocalDateTime;
-import org.example.expert.domain.common.dto.AuthUserDto;
-import org.example.expert.domain.todo.entity.Todo;
+import org.example.expert.common.dto.AuthUserDto;
+import org.example.expert.common.entity.Todo;
 import org.example.expert.domain.user.dto.response.UserResponseDto;
-import org.example.expert.domain.user.entity.User;
-import org.example.expert.domain.user.enums.UserRole;
+import org.example.expert.common.entity.User;
+import org.example.expert.common.enums.UserRole;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class SharedData {

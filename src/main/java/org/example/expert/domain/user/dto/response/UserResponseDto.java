@@ -1,7 +1,7 @@
 package org.example.expert.domain.user.dto.response;
 
 import lombok.Getter;
-import org.example.expert.domain.user.entity.User;
+import org.example.expert.common.entity.User;
 
 @Getter
 public class UserResponseDto {
