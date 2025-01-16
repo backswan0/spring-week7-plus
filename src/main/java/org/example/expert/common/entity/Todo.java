@@ -29,13 +29,23 @@ public class Todo extends Timestamped {
     private String weather;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(
+        name = "user_id",
+        nullable = false
+    )
     private User user;
 
-    @OneToMany(mappedBy = "todo", cascade = CascadeType.REMOVE)
+    @OneToMany(
+        mappedBy = "todo",
+        cascade = CascadeType.REMOVE
+    )
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "todo")
+    @OneToMany(
+        mappedBy = "todo",
+        cascade = CascadeType.PERSIST,
+        orphanRemoval = true
+    )
     private List<Manager> managers = new ArrayList<>();
 
     public Todo(
