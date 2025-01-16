@@ -40,18 +40,22 @@ public class SharedData {
                 1,
                 15,
                 10,
-                0
+                0,
+                0,
+                401000000
             )
         );
 
         ReflectionTestUtils.setField(
             TODO,
-            "modifiedAt",
+            "updatedAt",
             LocalDateTime.of(2025,
                 1,
                 15,
                 10,
-                0
+                0,
+                0,
+                401000000
             )
         );
     }

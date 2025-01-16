@@ -5,8 +5,18 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum ErrorCode {
-    NOT_FOUND_USER(HttpStatus.NOT_FOUND, "ERRNF01", "User is not found"),
-    NOT_FOUND_TODO(HttpStatus.NOT_FOUND, "ERRNF02", "Todo is not found");
+    MISMATCH_PASSWORD(HttpStatus.UNAUTHORIZED, "ERRMM01",
+        "Password does not match."),
+    MISMATCH_USER(HttpStatus.UNAUTHORIZED, "ERRMM02",
+        "User does not match the creator of the todo."),
+    MISMATCH_MANAGER(HttpStatus.UNAUTHORIZED, "ERRMM03",
+        "Manager is not assigned to this todo."),
+    NOT_FOUND_USER(HttpStatus.NOT_FOUND, "ERRNF01",
+        "User is not found."),
+    NOT_FOUND_TODO(HttpStatus.NOT_FOUND, "ERRNF02",
+        "Todo is not found."),
+    NOT_FOUND_MANAGER(HttpStatus.NOT_FOUND, "ERRNF03",
+        "Manager is not found.");
 
     private final HttpStatus status;
     private final String code;

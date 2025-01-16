@@ -8,6 +8,9 @@ import org.example.expert.common.entity.Manager;
 import org.example.expert.common.entity.Todo;
 import org.example.expert.common.entity.User;
 import org.example.expert.common.exception.InvalidRequestException;
+import org.example.expert.common.exception.mismatch.ManagerMismatchException;
+import org.example.expert.common.exception.mismatch.UserMismatchException;
+import org.example.expert.common.exception.notfound.ManagerNotFoundException;
 import org.example.expert.common.exception.notfound.TodoNotFoundException;
 import org.example.expert.common.exception.notfound.UserNotFoundException;
 import org.example.expert.domain.manager.dto.request.ManagerSaveRequestDto;
@@ -35,15 +38,19 @@ public class ManagerService {
         long todoId,
         ManagerSaveRequestDto requestDto
     ) {
-        // 일정을 만든 유저
         User user = User.fromAuthUser(authUser);
 
         Todo foundTodo = todoRepository.findById(todoId)
             .orElseThrow(TodoNotFoundException::new);
 
-        if (foundTodo.getUser() == null || !ObjectUtils.nullSafeEquals(user.getId(),
-            foundTodo.getUser().getId())) {
-            throw new InvalidRequestException("담당자를 등록하려고 하는 유저가 유효하지 않거나, 일정을 만든 유저가 아닙니다.");
+        boolean isUserMismatch = foundTodo.getUser() == null
+            || !ObjectUtils.nullSafeEquals(
+            user.getId(),
+            foundTodo.getUser().getId()
+        );
+
+        if (isUserMismatch) {
+            throw new UserMismatchException();
         }
 
         User managerToRegister = userRepository.findById(requestDto.getManagerUserId())
@@ -95,19 +102,28 @@ public class ManagerService {
     ) {
         User user = User.fromAuthUser(authUser);
 
-        Todo fooundTodo = todoRepository.findById(todoId)
+        Todo foundTodo = todoRepository.findById(todoId)
             .orElseThrow(TodoNotFoundException::new);
 
-        if (fooundTodo.getUser() == null || !ObjectUtils.nullSafeEquals(user.getId(),
-            fooundTodo.getUser().getId())) {
-            throw new InvalidRequestException("해당 일정을 만든 유저가 유효하지 않습니다.");
+        boolean isUserMismatch = foundTodo.getUser() == null
+            || !ObjectUtils.nullSafeEquals(
+            user.getId(),
+            foundTodo.getUser().getId()
+        );
+
+        if (isUserMismatch) {
+            throw new UserMismatchException();
         }
 
         Manager foundManager = managerRepository.findById(managerId)
-            .orElseThrow(() -> new InvalidRequestException("Manager not found"));
+            .orElseThrow(ManagerNotFoundException::new);
 
-        if (!ObjectUtils.nullSafeEquals(fooundTodo.getId(), foundManager.getTodo().getId())) {
-            throw new InvalidRequestException("해당 일정에 등록된 담당자가 아닙니다.");
+        boolean isManagerMismatch = !ObjectUtils.nullSafeEquals(
+            foundTodo.getId(),
+            foundManager.getTodo().getId());
+
+        if (isManagerMismatch) {
+            throw new ManagerMismatchException();
         }
 
         managerRepository.delete(foundManager);
