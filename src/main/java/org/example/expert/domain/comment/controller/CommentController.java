@@ -45,7 +45,7 @@ public class CommentController {
     ) {
         List<CommentResponseDto> responseDtoList = new ArrayList<>();
 
-        responseDtoList = commentService.getComments(todoId);
+        responseDtoList = commentService.getAllComments(todoId);
 
         return new ResponseEntity<>(responseDtoList, HttpStatus.OK);
     }

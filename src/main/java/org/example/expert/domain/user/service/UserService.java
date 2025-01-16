@@ -37,8 +37,12 @@ public class UserService {
         User foundUser = userRepository.findById(userId)
             .orElseThrow(UserNotFoundException::new);
 
-        if (passwordEncoder.matches(requestDto.getNewPassword(),
-            foundUser.getPassword())) {
+        boolean isSameAsCurrentPassword = passwordEncoder.matches(
+            requestDto.getNewPassword(),
+            foundUser.getPassword()
+        );
+
+        if (isSameAsCurrentPassword) {
             throw new InvalidRequestException("새 비밀번호는 기존 비밀번호와 같을 수 없습니다.");
         }
 
@@ -57,7 +61,8 @@ public class UserService {
     }
 
     private static void validateNewPassword(
-        UserPasswordUpdateRequestDto requestDto) {
+        UserPasswordUpdateRequestDto requestDto
+    ) {
         if (requestDto.getNewPassword().length() < 8 ||
             !requestDto.getNewPassword().matches(".*\\d.*") ||
             !requestDto.getNewPassword().matches(".*[A-Z].*")) {

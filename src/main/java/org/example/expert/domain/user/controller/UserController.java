@@ -30,7 +30,7 @@ public class UserController {
     }
 
     @PutMapping("/users")
-    public ResponseEntity<Void> changePassword(
+    public ResponseEntity<Void> updatePassword(
         @Auth AuthUserDto authUser,
         @RequestBody UserPasswordUpdateRequestDto requestDto
     ) {

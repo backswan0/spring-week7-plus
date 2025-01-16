@@ -35,13 +35,13 @@ public class CommentService {
         Todo foundTodo = todoRepository.findById(todoId)
             .orElseThrow(TodoNotFoundException::new);
 
-        Comment newComment = new Comment(
+        Comment commentToSave = new Comment(
             requestDto.getContents(),
             user,
             foundTodo
         );
 
-        Comment savedComment = commentRepository.save(newComment);
+        Comment savedComment = commentRepository.save(commentToSave);
 
         return new CommentSaveResponseDto(
             savedComment,
@@ -50,20 +50,20 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public List<CommentResponseDto> getComments(long todoId) {
+    public List<CommentResponseDto> getAllComments(long todoId) {
         List<Comment> commentList = new ArrayList<>();
 
         commentList = commentRepository.findByTodoIdWithUser(todoId);
 
-        List<CommentResponseDto> dtoList = new ArrayList<>();
+        List<CommentResponseDto> responseDtoList = new ArrayList<>();
 
-        dtoList = commentList.stream()
+        responseDtoList = commentList.stream()
             .map(comment -> new CommentResponseDto(
                     comment,
                     new UserResponseDto(comment.getUser())
                 )
             ).toList();
 
-        return dtoList;
+        return responseDtoList;
     }
 }
