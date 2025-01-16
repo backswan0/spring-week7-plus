@@ -1,7 +1,6 @@
 package org.example.expert.domain.todo.repository;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 import org.example.expert.common.entity.Todo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,14 +39,5 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
         @Param("startsAt") LocalDateTime startsAt,
         @Param("endsAt") LocalDateTime endsAt,
         Pageable pageable
-    );
-
-    @Query(
-        "SELECT t FROM Todo t " +
-            "LEFT JOIN FETCH t.user " +
-            "WHERE t.id = :todoId"
-    )
-    Optional<Todo> findByIdWithUser(
-        @Param("todoId") Long todoId
     );
 }

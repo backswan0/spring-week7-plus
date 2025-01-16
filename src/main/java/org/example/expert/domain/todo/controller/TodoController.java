@@ -61,7 +61,7 @@ public class TodoController {
     public ResponseEntity<TodoResponseDto> getTodoById(
         @PathVariable("todoId") long todoId
     ) {
-        TodoResponseDto responseDto = todoService.getTodoById(todoId);
+        TodoResponseDto responseDto = todoService.getTodo(todoId);
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
