@@ -1,7 +1,7 @@
 package org.example.expert.domain.auth.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.expert.common.config.JwtUtil;
+import org.example.expert.common.utils.JwtUtil;
 import org.example.expert.common.config.PasswordEncoder;
 import org.example.expert.common.entity.User;
 import org.example.expert.common.enums.UserRole;

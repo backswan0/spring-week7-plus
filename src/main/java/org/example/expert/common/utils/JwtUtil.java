@@ -1,4 +1,4 @@
-package org.example.expert.common.config;
+package org.example.expert.common.utils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
