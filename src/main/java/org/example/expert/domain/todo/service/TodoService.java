@@ -128,6 +128,8 @@ public class TodoService {
             pageable
         );
 
+        long totalElements = todoQueryRepository.countByTitle(search);
+
         return new PageImpl<>(
             todoList.stream()
                 .map(
@@ -137,7 +139,7 @@ public class TodoService {
                     )
                 ).toList(),
             pageable,
-            todoList.size()
+            totalElements
         );
     }
 

@@ -27,6 +27,16 @@ public class TodoQueryRepository {
             .fetch();
     }
 
+    public long countByTitle(String search) {
+        return Optional.ofNullable(
+                jpaQueryFactory.select(todo.count())
+                    .from(todo)
+                    .where(todo.title.contains(search))
+                    .fetchOne()
+            )
+            .orElse(0L);
+    }
+
     public Optional<Todo> findByIdWithUser(long todoId) {
         return Optional.ofNullable(jpaQueryFactory.selectFrom(todo)
             .leftJoin(todo.user).fetchJoin()
