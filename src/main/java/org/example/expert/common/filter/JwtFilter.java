@@ -34,10 +34,8 @@ public class JwtFilter extends OncePerRequestFilter {
         HttpServletResponse response,
         FilterChain filterChain
     ) throws ServletException, IOException {
-        HttpServletRequest httpRequest = (HttpServletRequest) request;  // HttpServletRequest로 캐스팅
-        HttpServletResponse httpResponse = (HttpServletResponse) response;  // HttpServletResponse로 캐스팅
 
-        String url = httpRequest.getRequestURI();  // 요청 URL을 가져옴
+        String url = request.getRequestURI();  // 요청 URL을 가져옴
 
         if (url.startsWith("/auth")) {
             // "/auth"로 시작하는 URL은 JWT 검증을 건너뛰고, 필터 체인에 전달
@@ -45,11 +43,11 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        String bearerJwt = httpRequest.getHeader("Authorization");  // 요청 헤더에서 JWT 토큰을 가져옴
+        String bearerJwt = request.getHeader("Authorization");  // 요청 헤더에서 JWT 토큰을 가져옴
 
         if (bearerJwt == null) {
             // JWT 토큰이 없으면 400 Bad Request 반환
-            httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "JWT 토큰이 필요합니다.");
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "JWT 토큰이 필요합니다.");
             return;
         }
 
@@ -61,7 +59,7 @@ public class JwtFilter extends OncePerRequestFilter {
             Claims claims = jwtUtil.extractClaims(jwt);
             if (claims == null) {
                 // JWT가 유효하지 않으면 400 Bad Request 반환
-                httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "잘못된 JWT 토큰입니다.");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "잘못된 JWT 토큰입니다.");
                 return;
             }
 
@@ -69,18 +67,10 @@ public class JwtFilter extends OncePerRequestFilter {
             UserRole userRole = UserRole.valueOf(claims.get("userRole", String.class));
 
             // JWT에서 사용자 정보를 추출하여 request 객체에 세팅
-            httpRequest.setAttribute("userId", Long.parseLong(claims.getSubject()));
-            httpRequest.setAttribute("email", claims.get("email"));
-            httpRequest.setAttribute("userRole", claims.get("userRole"));
-            httpRequest.setAttribute("nickname", claims.get("nickname"));
-
-            if (url.startsWith("/admin")) {
-                // "/admin"으로 시작하는 URL은 관리자 권한이 필요한데, 사용자 권한이 ADMIN이 아니면 403 Forbidden 반환
-                if (!UserRole.ADMIN.equals(userRole)) {
-                    httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "관리자 권한이 없습니다.");
-                    return;
-                }
-            }
+            request.setAttribute("userId", Long.parseLong(claims.getSubject()));
+            request.setAttribute("email", claims.get("email"));
+            request.setAttribute("userRole", claims.get("userRole"));
+            request.setAttribute("nickname", claims.get("nickname"));
 
             log.info("인증 객체 생성 전");
 
@@ -103,22 +93,23 @@ public class JwtFilter extends OncePerRequestFilter {
             log.info("인증 객체 설정 완료");
 
             filterChain.doFilter(request, response);  // 필터 체인으로 계속 진행
+
         } catch (SecurityException | MalformedJwtException e) {
             // JWT 서명이 잘못되었거나 형식이 잘못되면 401 Unauthorized 반환
             log.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.", e);
-            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "유효하지 않는 JWT 서명입니다.");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "유효하지 않는 JWT 서명입니다.");
         } catch (ExpiredJwtException e) {
             // JWT가 만료되었으면 401 Unauthorized 반환
             log.error("Expired JWT token, 만료된 JWT token 입니다.", e);
-            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "만료된 JWT 토큰입니다.");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "만료된 JWT 토큰입니다.");
         } catch (UnsupportedJwtException e) {
             // 지원되지 않는 JWT 토큰이면 400 Bad Request 반환
             log.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.", e);
-            httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "지원되지 않는 JWT 토큰입니다.");
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "지원되지 않는 JWT 토큰입니다.");
         } catch (Exception e) {
             // 기타 예외는 500 Internal Server Error 반환
             log.error("Internal server error", e);
-            httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 }
