@@ -21,6 +21,7 @@ public class TodoQueryRepository {
         Pageable pageable
     ) {
         return jpaQueryFactory.selectFrom(todo)
+            .leftJoin(todo.user).fetchJoin()
             .where(todo.title.contains(search))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
