@@ -1,5 +1,8 @@
 package org.example.expert.client;
 
+import java.net.URI;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import org.example.expert.client.dto.WeatherDto;
 import org.example.expert.common.exception.ServerException;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -8,10 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.net.URI;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 @Component
 public class WeatherClient {
@@ -24,10 +23,11 @@ public class WeatherClient {
 
     public String getTodayWeather() {
         ResponseEntity<WeatherDto[]> responseEntity =
-                restTemplate.getForEntity(buildWeatherApiUri(), WeatherDto[].class);
+            restTemplate.getForEntity(buildWeatherApiUri(), WeatherDto[].class);
 
         if (!HttpStatus.OK.equals(responseEntity.getStatusCode())) {
-            throw new ServerException("날씨 데이터를 가져오는데 실패했습니다. 상태 코드: " + responseEntity.getStatusCode());
+            throw new ServerException(
+                "날씨 데이터를 가져오는데 실패했습니다. 상태 코드: " + responseEntity.getStatusCode());
         }
 
         WeatherDto[] weatherArray = responseEntity.getBody();
@@ -48,11 +48,11 @@ public class WeatherClient {
 
     private URI buildWeatherApiUri() {
         return UriComponentsBuilder
-                .fromUriString("https://f-api.github.io")
-                .path("/f-api/weather.json")
-                .encode()
-                .build()
-                .toUri();
+            .fromUriString("https://f-api.github.io")
+            .path("/f-api/weather.json")
+            .encode()
+            .build()
+            .toUri();
     }
 
     private String getCurrentDate() {

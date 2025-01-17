@@ -10,6 +10,7 @@ import org.example.expert.common.exception.notfound.TodoNotFoundException;
 import org.example.expert.domain.todo.dto.request.TodoSaveRequestDto;
 import org.example.expert.domain.todo.dto.response.TodoResponseDto;
 import org.example.expert.domain.todo.dto.response.TodoSaveResponseDto;
+import org.example.expert.domain.todo.repository.TodoQueryRepository;
 import org.example.expert.domain.todo.repository.TodoRepository;
 import org.example.expert.domain.user.dto.response.UserResponseDto;
 import org.springframework.data.domain.Page;
@@ -24,6 +25,7 @@ public class TodoService {
 
     private final TodoRepository todoRepository;
     private final WeatherClient weatherClient;
+    private final TodoQueryRepository todoQueryRepository;
 
     @Transactional
     public TodoSaveResponseDto saveTodo(
@@ -100,8 +102,8 @@ public class TodoService {
     }
 
     @Transactional(readOnly = true)
-    public TodoResponseDto getTodoById(long todoId) {
-        Todo foundTodo = todoRepository.findByIdWithUser(todoId)
+    public TodoResponseDto getTodo(long todoId) {
+        Todo foundTodo = todoQueryRepository.findByIdWithUser(todoId)
             .orElseThrow(TodoNotFoundException::new);
 
         return new TodoResponseDto(

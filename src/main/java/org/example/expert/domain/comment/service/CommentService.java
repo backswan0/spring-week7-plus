@@ -36,7 +36,7 @@ public class CommentService {
             .orElseThrow(TodoNotFoundException::new);
 
         Comment commentToSave = new Comment(
-            requestDto.getContents(),
+            requestDto.contents(),
             user,
             foundTodo
         );

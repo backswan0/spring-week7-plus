@@ -5,7 +5,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.time.LocalDateTime;
 import org.example.expert.SharedData;
 import org.example.expert.common.exception.notfound.TodoNotFoundException;
 import org.example.expert.domain.todo.dto.response.TodoResponseDto;
@@ -43,7 +42,7 @@ class TodoControllerTest {
         String updatedAt = responseDto.getUpdatedAt().toString();
 
         // when
-        when(todoService.getTodoById(todoId)).thenReturn(responseDto);
+        when(todoService.getTodo(todoId)).thenReturn(responseDto);
 
         // then
         mockMvc.perform(get("/todos/{todoId}", todoId))
@@ -65,7 +64,7 @@ class TodoControllerTest {
         long todoId = 2L;
 
         // when
-        when(todoService.getTodoById(todoId))
+        when(todoService.getTodo(todoId))
             .thenThrow(new TodoNotFoundException());
 
         // then
