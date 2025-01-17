@@ -1,13 +1,13 @@
 package org.example.expert.domain.auth.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.expert.common.utils.JwtUtil;
-import org.example.expert.common.config.PasswordEncoder;
+import org.example.expert.common.encoder.PasswordEncoder;
 import org.example.expert.common.entity.User;
 import org.example.expert.common.enums.UserRole;
 import org.example.expert.common.exception.InvalidRequestException;
 import org.example.expert.common.exception.mismatch.PasswordMismatchException;
 import org.example.expert.common.exception.notfound.UserNotFoundException;
+import org.example.expert.common.utils.JwtUtil;
 import org.example.expert.domain.auth.dto.request.SignInRequestDto;
 import org.example.expert.domain.auth.dto.request.SignUpRequestDto;
 import org.example.expert.domain.auth.dto.response.SignInResponseDto;

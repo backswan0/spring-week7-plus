@@ -1,4 +1,4 @@
-package org.example.expert.common.config;
+package org.example.expert.common.resolver;
 
 import org.example.expert.common.annotation.Auth;
 import org.example.expert.common.dto.AuthUserDto;

@@ -2,6 +2,7 @@ package org.example.expert.common.config;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.example.expert.common.resolver.AuthUserArgumentResolver;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
