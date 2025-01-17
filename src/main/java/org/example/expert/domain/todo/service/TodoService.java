@@ -1,7 +1,10 @@
 package org.example.expert.domain.todo.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.expert.client.WeatherClient;
 import org.example.expert.common.dto.AuthUserDto;
 import org.example.expert.common.entity.Todo;
@@ -14,11 +17,13 @@ import org.example.expert.domain.todo.repository.TodoQueryRepository;
 import org.example.expert.domain.todo.repository.TodoRepository;
 import org.example.expert.domain.user.dto.response.UserResponseDto;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TodoService {
@@ -98,6 +103,41 @@ public class TodoService {
                 todo,
                 new UserResponseDto(todo.getUser())
             )
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public Page<TodoResponseDto> getTodoByConditions(
+        String search,
+        int page,
+        int size
+    ) {
+        log.info("페이지네이션 시작");
+
+        Pageable pageable = PageRequest.of(
+            Math.max(page - 1, 0),
+            size
+        );
+
+        log.info("페이지네이션 종료 및 일정 목록 조회 처리");
+
+        List<Todo> todoList = new ArrayList<>();
+
+        todoList = todoQueryRepository.findByTitle(
+            search,
+            pageable
+        );
+
+        return new PageImpl<>(
+            todoList.stream()
+                .map(
+                    todo -> new TodoResponseDto(
+                        todo,
+                        new UserResponseDto(todo.getUser())
+                    )
+                ).toList(),
+            pageable,
+            todoList.size()
         );
     }
 

@@ -3,6 +3,7 @@ package org.example.expert.domain.todo.controller;
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.expert.common.annotation.Auth;
 import org.example.expert.common.dto.AuthUserDto;
 import org.example.expert.domain.todo.dto.request.TodoSaveRequestDto;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class TodoController {
@@ -55,6 +57,25 @@ public class TodoController {
         );
 
         return new ResponseEntity<>(todoResponseDtoPage, HttpStatus.OK);
+    }
+
+    @GetMapping("/todos/list")
+    public ResponseEntity<Page<TodoResponseDto>> getTodoByConditions(
+        @RequestParam(required = false) String search,
+        @RequestParam(defaultValue = "1") int page,
+        @RequestParam(defaultValue = "10") int size
+    ) {
+        log.info("일정 제목으로 조회 시작");
+
+        Page<TodoResponseDto> responseDtoPage = todoService.getTodoByConditions(
+            search,
+            page,
+            size
+        );
+
+        log.info("일정 제목으로 조회 종료");
+
+        return new ResponseEntity<>(responseDtoPage, HttpStatus.OK);
     }
 
     @GetMapping("/todos/{todoId}")
