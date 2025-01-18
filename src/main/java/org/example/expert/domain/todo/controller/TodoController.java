@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.expert.common.annotation.Auth;
 import org.example.expert.common.dto.AuthUserDto;
+import org.example.expert.domain.todo.dto.request.TodoDto;
 import org.example.expert.domain.todo.dto.request.TodoSaveRequestDto;
 import org.example.expert.domain.todo.dto.response.TodoResponseDto;
 import org.example.expert.domain.todo.dto.response.TodoSaveResponseDto;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -61,14 +63,14 @@ public class TodoController {
 
     @GetMapping("/todos/list")
     public ResponseEntity<Page<TodoResponseDto>> getTodoByConditions(
-        @RequestParam(required = false) String search,
+        @ModelAttribute TodoDto todoDto,
         @RequestParam(defaultValue = "1") int page,
         @RequestParam(defaultValue = "10") int size
     ) {
         log.info("일정 제목으로 조회 시작");
 
         Page<TodoResponseDto> responseDtoPage = todoService.getTodoByConditions(
-            search,
+            todoDto,
             page,
             size
         );
