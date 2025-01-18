@@ -1,8 +1,6 @@
 package org.example.expert.domain.todo.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.expert.client.WeatherClient;
@@ -18,7 +16,6 @@ import org.example.expert.domain.todo.repository.TodoQueryRepository;
 import org.example.expert.domain.todo.repository.TodoRepository;
 import org.example.expert.domain.user.dto.response.UserResponseDto;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -122,27 +119,15 @@ public class TodoService {
 
         log.info("페이지네이션 종료 및 일정 목록 조회 처리");
 
-        List<Todo> todoList = new ArrayList<>();
-
-        // todo 휴먼 에러가 발생할 수 있다.
-        // todo projections 반영하기
-        todoList = todoQueryRepository.search(
+        Page<Todo> todoPage = todoQueryRepository.search(
             todoDto,
             pageable
         );
 
-        long totalElements = todoQueryRepository.countByTitle(todoDto.getTitle());
-
-        return new PageImpl<>(
-            todoList.stream()
-                .map(
-                    todo -> new TodoResponseDto(
-                        todo,
-                        new UserResponseDto(todo.getUser())
-                    )
-                ).toList(),
-            pageable,
-            totalElements
+        return todoPage.map(todo -> new TodoResponseDto(
+                todo,
+                new UserResponseDto(todo.getUser())
+            )
         );
     }
 
