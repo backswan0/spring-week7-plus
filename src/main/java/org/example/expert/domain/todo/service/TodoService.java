@@ -10,6 +10,7 @@ import org.example.expert.common.dto.AuthUserDto;
 import org.example.expert.common.entity.Todo;
 import org.example.expert.common.entity.User;
 import org.example.expert.common.exception.notfound.TodoNotFoundException;
+import org.example.expert.domain.todo.dto.request.TodoDto;
 import org.example.expert.domain.todo.dto.request.TodoSaveRequestDto;
 import org.example.expert.domain.todo.dto.response.TodoResponseDto;
 import org.example.expert.domain.todo.dto.response.TodoSaveResponseDto;
@@ -108,7 +109,7 @@ public class TodoService {
 
     @Transactional(readOnly = true)
     public Page<TodoResponseDto> getTodoByConditions(
-        String search,
+        TodoDto todoDto,
         int page,
         int size
     ) {
@@ -123,12 +124,14 @@ public class TodoService {
 
         List<Todo> todoList = new ArrayList<>();
 
-        todoList = todoQueryRepository.findByTitle(
-            search,
+        // todo 휴먼 에러가 발생할 수 있다.
+        // todo projections 반영하기
+        todoList = todoQueryRepository.search(
+            todoDto,
             pageable
         );
 
-        long totalElements = todoQueryRepository.countByTitle(search);
+        long totalElements = todoQueryRepository.countByTitle(todoDto.getTitle());
 
         return new PageImpl<>(
             todoList.stream()
