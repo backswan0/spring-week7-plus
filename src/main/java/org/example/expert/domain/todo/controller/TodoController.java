@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.expert.common.annotation.Auth;
 import org.example.expert.common.dto.AuthUserDto;
-import org.example.expert.domain.todo.dto.request.TodoDto;
+import org.example.expert.domain.todo.dto.request.TodoSearchRequestDto;
 import org.example.expert.domain.todo.dto.request.TodoSaveRequestDto;
 import org.example.expert.domain.todo.dto.response.TodoResponseDto;
 import org.example.expert.domain.todo.dto.response.TodoSaveResponseDto;
@@ -61,9 +61,9 @@ public class TodoController {
         return new ResponseEntity<>(todoResponseDtoPage, HttpStatus.OK);
     }
 
-    @GetMapping("/todos/list")
+    @GetMapping("/todos/search")
     public ResponseEntity<Page<TodoResponseDto>> getTodoByConditions(
-        @ModelAttribute TodoDto todoDto,
+        @ModelAttribute TodoSearchRequestDto todoDto,
         @RequestParam(defaultValue = "1") int page,
         @RequestParam(defaultValue = "10") int size
     ) {

@@ -8,7 +8,7 @@ import org.example.expert.common.dto.AuthUserDto;
 import org.example.expert.common.entity.Todo;
 import org.example.expert.common.entity.User;
 import org.example.expert.common.exception.notfound.TodoNotFoundException;
-import org.example.expert.domain.todo.dto.request.TodoDto;
+import org.example.expert.domain.todo.dto.request.TodoSearchRequestDto;
 import org.example.expert.domain.todo.dto.request.TodoSaveRequestDto;
 import org.example.expert.domain.todo.dto.response.TodoResponseDto;
 import org.example.expert.domain.todo.dto.response.TodoSaveResponseDto;
@@ -49,7 +49,7 @@ public class TodoService {
 
         return new TodoSaveResponseDto(
             savedTodo,
-            new UserResponseDto(user));
+            new UserResponseDto(savedTodo.getUser()));
     }
 
     @Transactional(readOnly = true)
@@ -106,7 +106,7 @@ public class TodoService {
 
     @Transactional(readOnly = true)
     public Page<TodoResponseDto> getTodoByConditions(
-        TodoDto todoDto,
+        TodoSearchRequestDto todoDto,
         int page,
         int size
     ) {
