@@ -12,6 +12,7 @@ import org.example.expert.domain.todo.dto.request.TodoSaveRequestDto;
 import org.example.expert.domain.todo.dto.request.TodoSearchRequestDto;
 import org.example.expert.domain.todo.dto.response.TodoResponseDto;
 import org.example.expert.domain.todo.dto.response.TodoSaveResponseDto;
+import org.example.expert.domain.todo.dto.response.TodoSearchResponseDto;
 import org.example.expert.domain.todo.repository.TodoQueryRepository;
 import org.example.expert.domain.todo.repository.TodoRepository;
 import org.example.expert.domain.user.dto.response.UserResponseDto;
@@ -105,7 +106,7 @@ public class TodoService {
     }
 
     @Transactional(readOnly = true)
-    public Page<TodoResponseDto> getTodoByConditions(
+    public Page<TodoSearchResponseDto> getTodoByConditions(
         TodoSearchRequestDto todoDto,
         int page,
         int size
@@ -124,7 +125,7 @@ public class TodoService {
             pageable
         );
 
-        return todoPage.map(todo -> new TodoResponseDto(
+        return todoPage.map(todo -> new TodoSearchResponseDto(
                 todo,
                 new UserResponseDto(todo.getUser())
             )

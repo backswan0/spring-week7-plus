@@ -2,6 +2,7 @@ package org.example.expert.domain.todo.repository;
 
 import static org.example.expert.common.entity.QTodo.todo;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDateTime;
@@ -57,8 +58,15 @@ public class TodoQueryRepository {
     ) {
         List<Todo> todoList = new ArrayList<>();
 
-        todoList = jpaQueryFactory.selectFrom(todo)
-            .leftJoin(todo.user).fetchJoin()
+        todoList = jpaQueryFactory.select(
+                Projections.fields(
+                    Todo.class,
+                    todo.title,
+                    todo.user
+                )
+            )
+            .from(todo)
+            .leftJoin(todo.user)
             .where(
                 containsTitle(dto.getTitle()),
                 goeStartsAt(dto.getStartsAt()),
