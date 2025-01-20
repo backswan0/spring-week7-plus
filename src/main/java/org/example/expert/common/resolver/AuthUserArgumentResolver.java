@@ -1,5 +1,6 @@
 package org.example.expert.common.resolver;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.expert.common.annotation.Auth;
 import org.example.expert.common.dto.AuthUserDto;
 import org.example.expert.common.enums.UserRole;
@@ -13,6 +14,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+@Slf4j
 public class AuthUserArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Override
@@ -48,6 +50,9 @@ public class AuthUserArgumentResolver implements HandlerMethodArgumentResolver {
         User user = (User) authentication.getPrincipal();
         Long userId = Long.parseLong(authentication.getName());
         String email = (String) authentication.getCredentials();
+
+        log.info("email: {}", email);
+
         String nickname = (String) authentication.getDetails();
 
         UserRole userRole = UserRole.valueOf(
