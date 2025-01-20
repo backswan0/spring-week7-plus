@@ -71,6 +71,7 @@ public class JwtFilter extends OncePerRequestFilter {
             );
 
             String nickname = claims.get("nickname", String.class);
+            String email = claims.get("email", String.class);
 
             log.info("인증 객체 생성 전");
 
@@ -87,7 +88,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 user,
-                null,
+                email,
                 user.getAuthorities()
             );
             authenticationToken.setDetails(nickname);
