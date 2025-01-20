@@ -10,6 +10,7 @@ import org.example.expert.domain.todo.dto.request.TodoSaveRequestDto;
 import org.example.expert.domain.todo.dto.request.TodoSearchRequestDto;
 import org.example.expert.domain.todo.dto.response.TodoResponseDto;
 import org.example.expert.domain.todo.dto.response.TodoSaveResponseDto;
+import org.example.expert.domain.todo.dto.response.TodoSearchResponseDto;
 import org.example.expert.domain.todo.service.TodoService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -62,20 +63,20 @@ public class TodoController {
     }
 
     @GetMapping("/todos/search")
-    public ResponseEntity<Page<TodoResponseDto>> getTodoByConditions(
+    public ResponseEntity<Page<TodoSearchResponseDto>> getTodoByConditions(
         @ModelAttribute TodoSearchRequestDto todoDto,
         @RequestParam(defaultValue = "1") int page,
         @RequestParam(defaultValue = "10") int size
     ) {
-        log.info("일정 제목으로 조회 시작");
+        log.info("검색 조건으로 일정 목록 조회 시작");
 
-        Page<TodoResponseDto> responseDtoPage = todoService.getTodoByConditions(
+        Page<TodoSearchResponseDto> responseDtoPage = todoService.getTodoByConditions(
             todoDto,
             page,
             size
         );
 
-        log.info("일정 제목으로 조회 종료");
+        log.info("검색 조건으로 일정 목록 조회 종료");
 
         return new ResponseEntity<>(responseDtoPage, HttpStatus.OK);
     }
