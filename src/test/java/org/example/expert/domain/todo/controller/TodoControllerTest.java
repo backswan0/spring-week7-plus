@@ -7,15 +7,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.example.expert.SharedData;
 import org.example.expert.common.exception.notfound.TodoNotFoundException;
+import org.example.expert.common.utils.JwtUtil;
 import org.example.expert.domain.todo.dto.response.TodoResponseDto;
 import org.example.expert.domain.todo.service.TodoService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(TodoController.class)
+@Import(JwtUtil.class)
+@WebMvcTest(value = TodoController.class)
+
 class TodoControllerTest {
 
     @Autowired
@@ -24,6 +28,9 @@ class TodoControllerTest {
     @MockBean
     private TodoService todoService;
 
+    // (1) 테스트용 토큰을 만든다.
+    // (2) 테스트 중에는 Spring Security를 끈다. (component 등록 대상에서 제외한다)
+    // (3) @WithMockUser
     @Test
     void todo_단건_조회에_성공한다() throws Exception {
         // given

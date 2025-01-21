@@ -53,7 +53,7 @@ public class ManagerService {
             throw new UserMismatchException();
         }
 
-        User managerToRegister = userRepository.findById(requestDto.getManagerUserId())
+        User managerToRegister = userRepository.findById(requestDto.managerUserId())
             .orElseThrow(UserNotFoundException::new);
 
         if (ObjectUtils.nullSafeEquals(user.getId(), managerToRegister.getId())) {

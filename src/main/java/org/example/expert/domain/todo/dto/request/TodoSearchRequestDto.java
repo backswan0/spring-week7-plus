@@ -9,14 +9,17 @@ public class TodoSearchRequestDto {
     private final String title;
     private final LocalDateTime startsAt;
     private final LocalDateTime endsAt;
+    private final String nickname;
 
     public TodoSearchRequestDto(
         String title,
         LocalDateTime startsAt,
-        LocalDateTime endsAt
+        LocalDateTime endsAt,
+        String nickname
     ) {
         this.title = title;
         this.startsAt = startsAt;
         this.endsAt = endsAt;
+        this.nickname = nickname;
     }
 }

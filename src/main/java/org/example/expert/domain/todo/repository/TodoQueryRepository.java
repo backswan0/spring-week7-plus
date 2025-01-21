@@ -70,7 +70,8 @@ public class TodoQueryRepository {
             .where(
                 containsTitle(dto.getTitle()),
                 goeStartsAt(dto.getStartsAt()),
-                loeEndsAt(dto.getEndsAt())
+                loeEndsAt(dto.getEndsAt()),
+                containsNickname(dto.getNickname())
             )
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
@@ -104,6 +105,14 @@ public class TodoQueryRepository {
         return todo.createdAt.loe(endsAt);
     }
 
+    // 담당자의 닉네임이 주어진 값으로 포함되는 일정을 찾는 조건 생성
+    private BooleanExpression containsNickname(String nickname) {
+        if (nickname == null) {
+            return null;
+        }
+        return todo.managers.any().user.nickname.contains(nickname);
+    }
+
     // 검색 조건에 맞는 일정의 총 개수 반환
     private long countTotalElements(TodoSearchRequestDto dto) {
         return Optional.ofNullable(
@@ -112,7 +121,8 @@ public class TodoQueryRepository {
                     .where(
                         containsTitle(dto.getTitle()),
                         goeStartsAt(dto.getStartsAt()),
-                        loeEndsAt(dto.getEndsAt())
+                        loeEndsAt(dto.getEndsAt()),
+                        containsNickname(dto.getNickname())
                     )
                     .fetchOne()
             )
