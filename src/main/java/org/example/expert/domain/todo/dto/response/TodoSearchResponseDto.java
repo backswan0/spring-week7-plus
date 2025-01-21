@@ -1,20 +1,21 @@
 package org.example.expert.domain.todo.dto.response;
 
 import lombok.Getter;
-import org.example.expert.common.entity.Todo;
-import org.example.expert.domain.user.dto.response.UserResponseDto;
 
 @Getter
 public class TodoSearchResponseDto {
 
     private final String title;
-    private final UserResponseDto user;
+    private final long managerCount;
+    private final long commentCount;
 
     public TodoSearchResponseDto(
-        Todo todo,
-        UserResponseDto user
+        String title,
+        long managerCount,
+        long commentCount
     ) {
-        this.title = todo.getTitle();
-        this.user = user;
+        this.title = title;
+        this.managerCount = managerCount;
+        this.commentCount = commentCount;
     }
 }
