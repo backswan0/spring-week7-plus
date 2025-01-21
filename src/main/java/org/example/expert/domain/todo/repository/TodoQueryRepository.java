@@ -1,5 +1,8 @@
 package org.example.expert.domain.todo.repository;
 
+import static com.querydsl.jpa.JPAExpressions.select;
+import static org.example.expert.common.entity.QComment.comment;
+import static org.example.expert.common.entity.QManager.manager;
 import static org.example.expert.common.entity.QTodo.todo;
 
 import com.querydsl.core.types.Projections;
@@ -10,13 +13,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.expert.common.entity.Todo;
 import org.example.expert.domain.todo.dto.request.TodoSearchRequestDto;
+import org.example.expert.domain.todo.dto.response.TodoSearchResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class TodoQueryRepository {
@@ -24,11 +30,11 @@ public class TodoQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     // 주어진 조건에 맞는 일정 리스트를 페이징 처리하여 반환
-    public Page<Todo> search(
+    public Page<TodoSearchResponseDto> search(
         TodoSearchRequestDto dto,
         Pageable pageable
     ) {
-        List<Todo> todoList = new ArrayList<>();
+        List<TodoSearchResponseDto> todoList = new ArrayList<>();
 
         todoList = findTodoList(dto, pageable);
 
@@ -52,21 +58,25 @@ public class TodoQueryRepository {
     }
 
     // 검색 조건에 맞는 일정 목록을 조회
-    private List<Todo> findTodoList(
+    private List<TodoSearchResponseDto> findTodoList(
         TodoSearchRequestDto dto,
         Pageable pageable
     ) {
-        List<Todo> todoList = new ArrayList<>();
+        List<TodoSearchResponseDto> todoList = new ArrayList<>();
 
         todoList = jpaQueryFactory.select(
-                Projections.fields(
-                    Todo.class,
+                Projections.constructor(
+                    TodoSearchResponseDto.class,
                     todo.title,
-                    todo.user
+                    select(manager.id.count())
+                        .from(manager)
+                        .where(manager.todo.id.eq(todo.id)),
+                    select(comment.count())
+                        .from(comment)
+                        .where(comment.todo.id.eq(todo.id))
                 )
             )
             .from(todo)
-            .leftJoin(todo.user)
             .where(
                 containsTitle(dto.getTitle()),
                 goeStartsAt(dto.getStartsAt()),

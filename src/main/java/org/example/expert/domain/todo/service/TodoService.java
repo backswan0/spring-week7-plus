@@ -120,15 +120,9 @@ public class TodoService {
 
         log.info("페이지네이션 종료 및 일정 목록 조회 처리");
 
-        Page<Todo> todoPage = todoQueryRepository.search(
+        return todoQueryRepository.search(
             todoDto,
             pageable
-        );
-
-        return todoPage.map(todo -> new TodoSearchResponseDto(
-                todo,
-                new UserResponseDto(todo.getUser())
-            )
         );
     }
 
