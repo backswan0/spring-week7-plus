@@ -13,6 +13,7 @@ import org.example.expert.common.exception.mismatch.UserMismatchException;
 import org.example.expert.common.exception.notfound.ManagerNotFoundException;
 import org.example.expert.common.exception.notfound.TodoNotFoundException;
 import org.example.expert.common.exception.notfound.UserNotFoundException;
+import org.example.expert.common.log.LogService;
 import org.example.expert.domain.manager.dto.request.ManagerSaveRequestDto;
 import org.example.expert.domain.manager.dto.response.ManagerResponseDto;
 import org.example.expert.domain.manager.dto.response.ManagerSaveResponseDto;
@@ -31,6 +32,7 @@ public class ManagerService {
     private final ManagerRepository managerRepository;
     private final UserRepository userRepository;
     private final TodoRepository todoRepository;
+    private final LogService logService;
 
     @Transactional
     public ManagerSaveResponseDto saveManager(
@@ -38,39 +40,49 @@ public class ManagerService {
         long todoId,
         ManagerSaveRequestDto requestDto
     ) {
-        User user = User.fromAuthUser(authUser);
+        try {
+            User user = User.fromAuthUser(authUser);
 
-        Todo foundTodo = todoRepository.findById(todoId)
-            .orElseThrow(TodoNotFoundException::new);
+            Todo foundTodo = todoRepository.findById(todoId)
+                .orElseThrow(TodoNotFoundException::new);
 
-        boolean isUserMismatch = foundTodo.getUser() == null
-            || !ObjectUtils.nullSafeEquals(
-            user.getId(),
-            foundTodo.getUser().getId()
-        );
+            boolean isUserMismatch = foundTodo.getUser() == null
+                || !ObjectUtils.nullSafeEquals(
+                user.getId(),
+                foundTodo.getUser().getId()
+            );
+            // 로그인한 사람(== 담당자를 등록하려는 사람), 일정을 작성한 사람, 담당자로 등록될 사람
+            // 로그인한 사람과 일정을 작성한 사람이 맞는지 확인
 
-        if (isUserMismatch) {
-            throw new UserMismatchException();
+            if (isUserMismatch) {
+                throw new UserMismatchException();
+            }
+
+            User managerToRegister = userRepository.findById(requestDto.managerUserId())
+                .orElseThrow(UserNotFoundException::new);
+
+            if (ObjectUtils.nullSafeEquals(user.getId(), managerToRegister.getId())) {
+                throw new InvalidRequestException("일정 작성자는 본인을 담당자로 등록할 수 없습니다.");
+            }
+
+            Manager ManagerUserToSave = new Manager(
+                managerToRegister,
+                foundTodo
+            );
+
+            Manager savedManagerUser = managerRepository.save(ManagerUserToSave);
+
+            logService.saveLog("매니저 등록 성공");
+
+            return new ManagerSaveResponseDto(
+                savedManagerUser,
+                new UserResponseDto(managerToRegister)
+            );
+
+        } catch (Exception e) {
+            logService.saveLog("매니저 등록 실패: " + e.getMessage());
+            throw e;
         }
-
-        User managerToRegister = userRepository.findById(requestDto.managerUserId())
-            .orElseThrow(UserNotFoundException::new);
-
-        if (ObjectUtils.nullSafeEquals(user.getId(), managerToRegister.getId())) {
-            throw new InvalidRequestException("일정 작성자는 본인을 담당자로 등록할 수 없습니다.");
-        }
-
-        Manager ManagerUserToSave = new Manager(
-            managerToRegister,
-            foundTodo
-        );
-
-        Manager savedManagerUser = managerRepository.save(ManagerUserToSave);
-
-        return new ManagerSaveResponseDto(
-            savedManagerUser,
-            new UserResponseDto(managerToRegister)
-        );
     }
 
     @Transactional(readOnly = true)
