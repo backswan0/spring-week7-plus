@@ -12,10 +12,17 @@ public class LogService {
     private final LogRepository logRepository;
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void saveLog(String message) {
+    public void saveSuccessLog() {
 
-        // todo: 휴먼 에러가 줄어들도록 "매니저 등록 실패" 메시지 입력을 여기서 처리하자
-        Log log = new Log(message);
+        Log log = new Log("Operation was successful.");
+
+        logRepository.save(log);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void saveFailureLog(String message) {
+
+        Log log = new Log("Failure: " + message);
 
         logRepository.save(log);
     }

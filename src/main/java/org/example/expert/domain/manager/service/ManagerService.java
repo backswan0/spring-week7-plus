@@ -7,7 +7,7 @@ import org.example.expert.common.dto.AuthUserDto;
 import org.example.expert.common.entity.Manager;
 import org.example.expert.common.entity.Todo;
 import org.example.expert.common.entity.User;
-import org.example.expert.common.exception.InvalidRequestException;
+import org.example.expert.common.exception.badrequest.TodoSelfAssignmentException;
 import org.example.expert.common.exception.mismatch.ManagerMismatchException;
 import org.example.expert.common.exception.mismatch.UserMismatchException;
 import org.example.expert.common.exception.notfound.ManagerNotFoundException;
@@ -51,8 +51,6 @@ public class ManagerService {
                 user.getId(),
                 foundTodo.getUser().getId()
             );
-            // 로그인한 사람(== 담당자를 등록하려는 사람), 일정을 작성한 사람, 담당자로 등록될 사람
-            // 로그인한 사람과 일정을 작성한 사람이 맞는지 확인
 
             if (isUserMismatch) {
                 throw new UserMismatchException();
@@ -61,8 +59,13 @@ public class ManagerService {
             User managerToRegister = userRepository.findById(requestDto.managerUserId())
                 .orElseThrow(UserNotFoundException::new);
 
-            if (ObjectUtils.nullSafeEquals(user.getId(), managerToRegister.getId())) {
-                throw new InvalidRequestException("일정 작성자는 본인을 담당자로 등록할 수 없습니다.");
+            boolean isSameUser = ObjectUtils.nullSafeEquals(
+                user.getId(),
+                managerToRegister.getId()
+            );
+
+            if (isSameUser) {
+                throw new TodoSelfAssignmentException();
             }
 
             Manager ManagerUserToSave = new Manager(
@@ -72,7 +75,7 @@ public class ManagerService {
 
             Manager savedManagerUser = managerRepository.save(ManagerUserToSave);
 
-            logService.saveLog("매니저 등록 성공");
+            logService.saveSuccessLog();
 
             return new ManagerSaveResponseDto(
                 savedManagerUser,
@@ -80,7 +83,7 @@ public class ManagerService {
             );
 
         } catch (Exception e) {
-            logService.saveLog("매니저 등록 실패: " + e.getMessage());
+            logService.saveFailureLog(e.getMessage());
             throw e;
         }
     }
