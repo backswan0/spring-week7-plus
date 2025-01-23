@@ -16,7 +16,9 @@ public enum ErrorCode {
     NOT_FOUND_TODO(HttpStatus.NOT_FOUND, "ERRNF02",
         "Todo is not found."),
     NOT_FOUND_MANAGER(HttpStatus.NOT_FOUND, "ERRNF03",
-        "Manager is not found.");
+        "Manager is not found."),
+    BAD_REQUEST_MANAGER(HttpStatus.BAD_REQUEST, "ERRBR01",
+        "Creator of todo cannot assign themselves as the manager.");
 
     private final HttpStatus status;
     private final String code;
