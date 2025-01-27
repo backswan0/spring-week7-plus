@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
+    // 주어진 todoId에 해당하는 Comment 목록 및 해당 Comment와 연관된 'user' 엔티티를 함께 조회
     @Query(
         "SELECT c FROM Comment c "
             + "JOIN FETCH c.user "
