@@ -88,31 +88,25 @@ erDiagram
 | PATCH  | /admin/users/{userId} | Update user role   | `userRole`                               |                    | `userId`       | 200           |
 
 #### API Endpoints - Todo
-| Method | URI         | Description        | Request Body            | Request Parameters | Path Variables | Response Code |
-|--------|-------------|--------------------|-------------------------|--------------------|----------------|---------------|
-| POST   | /plans      | Create plan        | `title` `task` `userId` |                    |                | 201           |
-| GET    | /plans      | Read all plans     |                         | `page` `size`      |                | 200           |
-| GET    | /plans/{id} | Read specific plan |                         |                    | `id`           | 200           |
-| PATCH  | /plans/{id} | Update plan        | `title` `task`          |                    | `id`           | 200           |
-| DELETE | /plans/{id} | Delete plan        |                         |                    | `id`           | 200           |
+| Method | URI             | Description                    | Request Body                           | Request Parameters                          | Path Variables | Response Code |
+|--------|-----------------|--------------------------------|----------------------------------------|---------------------------------------------|----------------|---------------|
+| POST   | /todos          | Create todo                    | `title` `contents`                     |                                             |                | 201           |
+| GET    | /todos          | Read all todos                 |                                        | `page` `size` `weather` `startsAt` `endsAt` |                | 200           |
+| GET    | /todos/search   | Read todos based on conditions | `title` `startsAt` `endsAt` `nickname` | `page` `size`                               |                | 200           |
+| GET    | /todos/{todoId} | Read specific todo             |                                        |                                             | `todoId`       | 200           |
 
 #### API Endpoints - Manager
-| Method | URI            | Description            | Request Body       | Request Parameters | Path Variables | Response Code |
-|--------|----------------|------------------------|--------------------|--------------------|----------------|---------------|
-| POST   | /comments      | Create comments        | `content` `planId` |                    |                | 201           |
-| GET    | /comments      | Read all comments      |                    |                    |                | 200           |
-| GET    | /comments/{id} | Read specific comments |                    |                    | `id`           | 200           |
-| PATCH  | /comments/{id} | Update comments        | `content`          |                    | `id`           | 200           |
-| DELETE | /comments/{id} | Delete comments        |                    |                    | `id`           | 200           |
+| Method | URI                                  | Description       | Request Body    | Request Parameters | Path Variables       | Response Code |
+|--------|--------------------------------------|-------------------|-----------------|--------------------|----------------------|---------------|
+| POST   | /todos/{todoId}/managers             | Create manager    | `managerUserId` |                    | `todoId`             | 201           |
+| GET    | /todos/{todoId}/managers             | Read all managers |                 |                    | `todoId`             | 200           |
+| DELETE | /todos/{todoId}/managers/{managerId} | Delete manager    |                 |                    | `todoId` `managerId` | 200           |
 
 #### API Endpoints - Comment
-| Method | URI            | Description            | Request Body       | Request Parameters | Path Variables | Response Code |
-|--------|----------------|------------------------|--------------------|--------------------|----------------|---------------|
-| POST   | /comments      | Create comments        | `content` `planId` |                    |                | 201           |
-| GET    | /comments      | Read all comments      |                    |                    |                | 200           |
-| GET    | /comments/{id} | Read specific comments |                    |                    | `id`           | 200           |
-| PATCH  | /comments/{id} | Update comments        | `content`          |                    | `id`           | 200           |
-| DELETE | /comments/{id} | Delete comments        |                    |                    | `id`           | 200           |
+| Method | URI                      | Description            | Request Body | Request Parameters | Path Variables | Response Code |
+|--------|--------------------------|------------------------|--------------|--------------------|----------------|---------------|
+| POST   | /todos/{todoId}/comments | Create comment         | `contents`   | `todoId`           |                | 201           |
+| GET    | /todos/{todoId}/comments | Read all comments      |              | `todoId`           |                | 200           |
 
 ### API Details
 #### Request Body Details - User
@@ -148,21 +142,20 @@ erDiagram
     }
     ```
 
-#### Request Body Details - Plan
-1. **`POST` Create Plan**
+#### Request Body Details - Todo
+1. **`POST` Create Todo**
     ```json
     {
-        "title" : "일정 제목",
-        "task" : "일정 내용",
-        "userId" : 1
+        "title" : "할 일 제목",
+        "contents" : "할 일 내용"
     }
     ```
-
-2. **`PATCH` Update Plan**
+   
+#### Request Body Details - Manager
+1. **`POST` Create Manager**
     ```json
     {
-        "title" : "수정하려는 일정 제목",
-        "task" : "수정하려는 일정 내용"
+        "managerUserId" : "매니저로 등록하려는 사용자의 Id"
     }
     ```
 
@@ -170,15 +163,7 @@ erDiagram
 1. **`POST` Create Comment**
     ```json
     {
-        "content" : "댓글 내용",
-        "planId" : 1
-    }
-    ```
-
-2. **`PATCH` Update Comment**
-    ```json
-    {
-        "content" : "수정하려는 댓글 내용"
+        "contents" : "댓글 내용"
     }
     ```
 
@@ -205,235 +190,199 @@ erDiagram
     }
     ```
 
-#### Response Body Details - Plan
-1. **`CREATE` Create Plan**
+#### Response Body Details - Todo
+1. **`CREATE` Create Todo**
     ```json
     {
         "id" : 1,
-        "title" : "일정 제목",
-        "task" : "일정 내용",
-        "createdAt" : "2024-12-16 14:46:03",
-        "updatedAt" : "2024-12-16 14:46:03",
-        "member": {
-            "id": 1,
-            "username": "작성자 이름",
-            "email": "작성자 이메일"
+        "title" : "할 일 제목",
+        "contents" : "할 일 내용",
+        "weather" : "흐림",
+        "user": {
+           "id": 1,
+           "email": "작성자 이메일"
         }
     }
     ```
 
-2. **`GET` Read All Plans**
+2. **`GET` Read All Todos**
+```json
+{
+   "content": [
+      {
+         "id": 1,
+         "title": "할 일1 제목",
+         "contents": "할 일1 내용",
+         "weather": "맑음",
+         "user": {
+            "id": 1,
+            "email": "작성자1 이메일"
+         },
+         "createdAt": "2024-12-17T14:00:00",
+         "updatedAt": "2024-12-17T15:00:00"
+      },
+      {
+         "id": 2,
+         "title": "할 일2 제목",
+         "contents": "할 일2 내용",
+         "weather": "비",
+         "user": {
+            "id": 2,
+            "email": "작성자2 이메일"
+         },
+         "createdAt": "2024-12-16T10:20:00",
+         "updatedAt": "2024-12-16T10:20:30"
+      }
+   ],
+   "page": {
+      "size": 10,
+      "number": 0,
+      "totalElements": 5,
+      "totalPages": 1
+   }
+}
+```
+
+3. **`GET` Read todos based on conditions**
+```json
+{
+   "content": [
+      {
+         "title": "할 일1 제목",
+         "managerCount": 3,
+         "commentCount": 5
+      },
+      {
+         "title": "할 일2 제목",
+         "managerCount": 2,
+         "commentCount": 8
+      }
+   ],
+   "page": {
+      "size": 10,
+      "number": 0,
+      "totalElements": 5,
+      "totalPages": 1
+   }
+}
+```
+
+4. **`GET` READ Specific Todo**
     ```json
-    [
-        {
-            "title" : "일정1 제목",
-            "task" : "일정1 내용",
-            "createdAt" : "2024-12-17 14:00:00",
-            "updatedAt" : "2024-12-17 15:00:00",
-            "username": "일정1 작성자 이름",
-            "totalComment": "일정1에 달린 댓글 총 개수"
+    {
+        "id" : 1,
+        "title" : "할 일 제목",
+        "contents" : "할 일 내용",
+        "weather" : "맑음",
+        "user": {
+           "id": 1,
+           "email": "작성자 이메일"
         },
-        {
-            "title" : "일정2 제목",
-            "task" : "일정2 내용",
-            "createdAt" : "2024-12-16 10:20:00",
-            "updatedAt" : "2024-12-16 10:20:30",
-            "username": "일정2 작성자 이름",
-            "totalComment": "일정2에 달린 댓글 총 개수 "
-        },
-        {
-            "title" : "일정3 제목",
-            "task" : "일정3 내용",
-            "createdAt" : "2024-12-16 01:10:15",
-            "updatedAt" : "2024-12-16 01:10:15",
-            "username": "일정3 작성자 이름",
-            "totalComment": "일정3에 달린 댓글 총 개수"
-        }   
-    ]
-    ```
-
-3. **`GET` Read Specific Plan**
-    ```json
-    {
-        "id" : 1,
-        "title" : "일정 제목",
-        "task" : "일정 내용",
-        "createdAt" : "2024-12-16 14:45:00",
-        "updatedAt" : "2024-12-16 14:45:00",
-        "member": {
-            "id": 1,
-            "username": "일정 작성자 이름",
-            "email": "일정 작성자 이메일"
-        }
+        "createdAt": "2024-12-17T14:00:00",
+        "updatedAt": "2024-12-17T15:00:00"
     }
     ```
-
-4. **`PATCH` Update Plan**
-    ```json
-    {
-        "id" : 1,
-        "title" : "수정된 일정 제목",
-        "task" : "수정된 일정 내용",
-        "createdAt" : "2024-12-16 14:46:04",
-        "updatedAt" : "2024-12-16 15:03:31",
-        "member": {
-            "id": 1,
-            "username": "일정 작성자 이름",
-            "email": "일정 작성자 이메일"
-        }
-    }
-    ``` 
 
 #### Response Body Details - Comment
 1. **`CREATE` Create Comment**
-```json
-{
-    "id": 1,
-    "content": "댓글 내용",
-    "plan": {
-        "id": 1,
-        "title": "일정 제목",
-        "task": "일정 내용",
-        "createdAt": "2024-12-19 09:34:25",
-        "updatedAt": "2024-12-19 09:36:56",
-        "member": {
-            "id": 1,
-            "username": "사용자 이름",
-            "email": "사용자 이메일"
+    ```json
+    {
+        "id" : 1,
+        "contents" : "댓글 내용",
+        "user": {
+           "id": 1,
+           "email": "작성자 이메일"
         }
     }
-}
-```
+    ```
 
 2. **`GET` Read all Comments**
 ```json
 [
     {
         "id": 1,
-        "content": "댓글1 내용",
-        "plan": {
+        "contents": "댓글1 내용",
+        "user": {
             "id": 1,
-            "title": "댓글1이 달린 일정1의 제목",
-            "task": "댓글1이 달린 일정1의 내용",
-            "createdAt": "2024-12-19 10:34:25",
-            "updatedAt": "2024-12-19 10:36:56",
-            "member": {
-                "id": 1,
-                "username": "일정1 작성자의 이름",
-                "email": "일정1 작성자의 이메일"
-            }
+            "email": "작성자 이메일"
         }
     },
     {
         "id": 2,
-        "content": "댓글2 내용",
-        "plan": {
+        "contents": "댓글2 내용",
+        "user": {
             "id": 2,
-            "title": "댓글2가 달린 일정2의 제목",
-            "task": "댓글2가 달린 일정2의 내용",
-            "createdAt": "2024-12-19 09:00:00",
-            "updatedAt": "2024-12-19 10:05:00",
-            "member": {
-                "id": 2,
-                "username": "일정2 작성자의 이름",
-                "email": "일정2 작성자의 이름"
-            }
+            "email": "작성자 이메일"
         }
     }
 ]
 ```
 
-3. **`GET` Read specific Comment**
-```json
-{
-    "id": 1,
-    "content": "댓글1 내용",
-    "plan": {
-        "id": 3,
-        "title": "댓글1이 달린 일정3의 제목",
-        "task": "댓글1이 달린 일정3의 내용",
-        "createdAt": "2024-12-19 09:48:51",
-        "updatedAt": "2024-12-19 09:48:51",
-        "member": {
-            "id": 1,
-            "username": "일정3 작성자의 이름",
-            "email": "일정3 작성자의 이메일"
-        }
-    }
-}
-```
-
-4. **`PATCH` Update Comment**
-```json
-{
-    "id": 1,
-    "content": "수정한 댓글1의 내용",
-    "plan": {
-        "id": 1,
-        "title": "댓글1이 달린 일정1의 제목",
-        "task": " ",
-        "createdAt": "2024-12-19 09:34:25",
-        "updatedAt": "2024-12-19 09:36:56",
-        "member": {
-            "id": 1,
-            "username": "일정1 작성자의 이름",
-            "email": "일정1 작성자의 이메일"
-        }
-    }
-}
-```
-
 ### Error Response Code
 #### Description
-| HTTP Status | Description           | When Returned                                                                                      |
-|-------------|-----------------------|----------------------------------------------------------------------------------------------------|
-| 400         | Bad Request           | Required fields are missing <br/> The length or format is incorrect <br/> Value `null` is provided |
-| 401         | Unauthorized          | Authentication fails <br/> User is not signed in                                                   |
-| 404         | Not Found             | Resource cannot be found                                                                           |
-| 500         | Internal Server Error | A server error occurs                                                                              |
-
+| HTTP Status | Description           | When Returned                                                |
+|-------------|-----------------------|--------------------------------------------------------------|
+| 400         | Bad Request           | Required fields are missing <br/> Value `null` is provided   |
+| 401         | Unauthorized          | Authentication fails <br/> User is not signed in             |
+| 404         | Not Found             | Resource cannot be found                                     |
+| 500         | Internal Server Error | A server error occurs                                        |
 
 #### Examples
-| HTTP Status | Message Example                                                                                                                                                                                                    |
-|-------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 400         | "**<필드 이름(영어)>** 필드에서 오류가 발생했습니다. **<필드 이름(한글)>** 입력은 필수입니다." <br/> "길이가 2에서 20 사이여야 합니다." <br/> "이메일 형식이 틀렸습니다. 다시 입력해 주세요." <br/> "변경을 원하시지 않으면 가입 시 입력한 값을 입력해 주세요." <br/> "null과 빈값을 허용하지 않습니다. 공백으로 입력해 주세요." |
-| 401         | "로그인 해주세요." <br/> "비밀번호가 일치하지 않습니다." <br/> "이메일이 일치하지 않습니다."                                                                                                                                                       |
-| 404         | "입력된 id가 존재하지 않습니다. 다시 입력해 주세요." <br/> "이미 삭제되었거나 존재하지 않는 id입니다."                                                                                                                                                  |
-| 500         | "오류가 발생했습니다."                                                                                                                                                                                                      |
+| HTTP Status | Message Example                                                                                                               |
+|-------------|-------------------------------------------------------------------------------------------------------------------------------|
+| 400         | "Creator of todo cannot assign themselves as the manager."                                                                    |
+| 401         | "Password does not match." <br/> "User does not match the creator of the todo." <br/> "Manager is not assigned to this todo." |
+| 404         | "User is not found." <br/> "Todo is not found." <br/> "Manager is not found."                                                 |
+| 500         | "An unexpected error occurred."                                                                                               |
 
 ### Request Body Description
 #### Field Information - User
-| Field Name | Data Type     | Mandatory Status | Description                                                                                               |
-|------------|---------------|------------------|-----------------------------------------------------------------------------------------------------------|
-| id         | Long          | Optional         | Identifier for each user  <br/> Required for **GET** or **PATCH** requests                                |
-| nickname   | String        | Mandatory        | User's nickname                                                                                           |
-| email      | String        | Mandatory        | User's email address                                                                                      |
-| password   | String        | Mandatory        | User's password                                                                                           |
-| createdAt  | LocalDateTime | Not Included     | The timestamp when the user is created  <br/> Automatically stored in the database upon creation          |
-| updatedAt  | LocalDateTime | Not Included     | The timestamp when the user is last updated  <br/> Automatically stored in the database upon modification |
+| Field Name | Data Type     | Mandatory Status | Description                                                                                           |
+|------------|---------------|------------------|-------------------------------------------------------------------------------------------------------|
+| id         | Long          | Optional         | Identifier for each user  <br/> Required for **GET** or **PATCH** requests                            |
+| nickname   | String        | Mandatory        | User's nickname                                                                                       |
+| email      | String        | Mandatory        | User's email address                                                                                  |
+| password   | String        | Mandatory        | User's password                                                                                       |
+| createdAt  | LocalDateTime | Not Included     | Timestamp when the user is created  <br/> Automatically stored in the database upon creation          |
+| updatedAt  | LocalDateTime | Not Included     | Timestamp when the user is last updated  <br/> Automatically stored in the database upon modification |
 
-#### Field Information - Plan
-| Field Name | Data Type     | Mandatory Status | Description                                                                                                                          |
-|------------|---------------|------------------|--------------------------------------------------------------------------------------------------------------------------------------|
-| id         | Long          | Optional         | Identifier for each plan <br/> Required for **GET**, **PATCH**, or **DELETE** requests                                               |
-| title      | String        | Mandatory        | Title of the plan <br/> Must be between 1 and 20 characters                                                                          |
-| task       | String        | Optional         | Detailed description of the plan <br/> Must be less than 200 characters <br/> Should be an empty String(`""`) when the value is null |
-| userId     | Long          | Mandatory        | Identifier of user <br/> Required for **CREATE** request                                                                             |
-| createdAt  | LocalDateTime | Not Included     | The timestamp when the plan is created  <br/> Automatically stored in the database upon creation                                     |
-| updatedAt  | LocalDateTime | Not Included     | The timestamp when the plan is last updated  <br/> Automatically stored in the database upon modification                            |
-| isDeleted  | Boolean       | Not Included     | Deletion status of the plan  <br/> Automatically stored in the database upon deletion                                                |
-| deletedAt  | LocalDateTime | Not Included     | The timestamp when the plan is deleted  <br/> Automatically stored in the database upon deletion                                     |
+#### Field Information - Todo
+| Field Name | Data Type     | Mandatory Status | Description                                                                                           |
+|------------|---------------|------------------|-------------------------------------------------------------------------------------------------------|
+| id         | Long          | Optional         | Identifier for each todo <br/> Required for **GET** request                                           |
+| title      | String        | Mandatory        | Title of the todo                                                                                     |
+| contents   | String        | Mandatory        | Detailed description of the todo                                                                      |
+| weather    | String        | Not Included     | Weather condition <br/> Automatically stored in the database upon creation                            |
+| createdAt  | LocalDateTime | Not Included     | Timestamp when the todo is created  <br/> Automatically stored in the database upon creation          |
+| updatedAt  | LocalDateTime | Not Included     | Timestamp when the todo is last updated  <br/> Automatically stored in the database upon modification |
+
+#### Field Information - Manager
+| Field Name | Data Type     | Mandatory Status | Description                                                                         |
+|------------|---------------|------------------|-------------------------------------------------------------------------------------|
+| id         | Long          | Optional         | Identifier for each manager <br/> Required for **DELETE** request                   |
+| userId     | Long          | Mandatory        | Identifier of the user <br/> Required for **POST** request                          |
+| todoId     | Long          | Mandatory        | Identifier of the todo <br/> Required for **POST**, **GET**, or **DELETE** requests |
 
 #### Field Information - Comment
-| Field Name | Data Type     | Mandatory Status | Description                                                                                                   |
-|------------|---------------|------------------|---------------------------------------------------------------------------------------------------------------|
-| id         | Long          | Optional         | Identifier for each comments <br/> Required for **GET**, **PATCH**, or **DELETE** requests                    |
-| content    | String        | Mandatory        | Content of comments <br/> Must be less than 200 characters                                                    |
-| planId     | Long          | Mandatory        | Identifier of plan <br/> Required for **CREATE** request                                                      |
-| createdAt  | LocalDateTime | Not Included     | The timestamp when the comments is created  <br/> Automatically stored in the database upon creation          |
-| updatedAt  | LocalDateTime | Not Included     | The timestamp when the comments is last updated  <br/> Automatically stored in the database upon modification |
-| isDeleted  | Boolean       | Not Included     | Deletion status of the comments <br/> Automatically stored in the database upon deletion                      |
-| deletedAt  | LocalDateTime | Not Included     | The timestamp when the comments is deleted <br/> Automatically stored in the database upon deletion           |
+| Field Name | Data Type     | Mandatory Status | Description                                                                                              |
+|------------|---------------|------------------|----------------------------------------------------------------------------------------------------------|
+| id         | Long          | Optional         | Identifier for each comment                                                                              |
+| content    | String        | Mandatory        | Content of the comment                                                                                   |
+| todoId     | Long          | Mandatory        | Identifier of todo <br/> Required for **POST** or **GET** requests                                       |
+| createdAt  | LocalDateTime | Not Included     | Timestamp when the comment is created  <br/> Automatically stored in the database upon creation          |
+| updatedAt  | LocalDateTime | Not Included     | Timestamp when the comment is last updated  <br/> Automatically stored in the database upon modification |
+
+### Query Parameter Description
+#### Parameter Information - Todo
+| Parameter Name | Data Type     | Mandatory Status | Default | Description                                                            |
+|----------------|---------------|------------------|---------|------------------------------------------------------------------------|
+| title          | String        | Optional         | None    | Title of the todo to search                                            |
+| weather        | String        | Optional         | None    | Weather condition </br> </br> e.g., Humid and Cloudy                   |
+| startsAt       | LocalDateTime | Optional         | None    | Start date of the todo creation range </br> Must be in ISO 8601 format |
+| endsAt         | LocalDateTime | Optional         | None    | End date of the todo creation range </br> Must be in ISO 8601 format   |
+| nickname       | String        | Optional         | None    | Nickname of the manager to search                                      |
+| page           | int           | Optional         | 1       | Page number                                                            |
+| size           | int           | Optional         | 10      | Page size                                                              |
 
 ## 📊 Database Schema
 ### 1. USER
@@ -515,15 +464,15 @@ CREATE TABLE logs
 ```
 
 ## 🚀 Key Features
-- Implements CRUD functionality for `members`, `plans`, and `comments`.
+- Implements CRUD functionality for `users`, `todos`, `managers`, and `comments`.
 - Stores data in an SQL database using JPA.
 - Resolves name duplication issues by using the user’s unique identifier.
-- Supports pagination: By default, 10 items per page for retrieving the plan list.
-- Provides soft delete functionality for `members`, `plans`, and `comments`.
+- Supports pagination: By default, 10 items per page for retrieving the todo list.
 - Implements exception handling.
-- Prevents duplicate sign-ups with the same email during registration.
 - Encrypts passwords using BCrypt before storing them in the database.
-- Implements login functionality by creating a login filter and registering configuration.
+- Logs success and failure during the manager registration process, regardless of the outcome.
+- Uses Spring Security to handle authentication and authorization.
+- Supports customizable Todo retrieval with QueryDSL.
 
 ## 🔍 Characteristics
 - Separates the 3-layer architecture and DTOs into different packages by URL
