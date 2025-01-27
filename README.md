@@ -452,7 +452,7 @@ CREATE TABLE comments
 );
 ```
 
-### 5. LOGS
+### 5. LOG
 ```sql
 CREATE TABLE logs
 (

@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface ManagerRepository extends JpaRepository<Manager, Long> {
 
+    // 주어진 todoId에 해당하는 Manager 목록과 해당 Manager와 연관된 'user' 엔티티를 함께 조회
     @Query(
         "SELECT m FROM Manager m "
             + "JOIN FETCH m.user "

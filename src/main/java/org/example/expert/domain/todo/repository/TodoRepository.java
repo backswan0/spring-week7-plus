@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface TodoRepository extends JpaRepository<Todo, Long> {
 
+    // 'user' 관계를 페치 조인하여 할 일 목록을 수정일로 내림차순하여 반환
     @EntityGraph(attributePaths = "user")
     @Query(
         "SELECT t FROM Todo t "
@@ -18,6 +19,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
     )
     Page<Todo> findAllByOrderByUpdatedAtDesc(Pageable pageable);
 
+    // 'weather' 필드를 조건으로 할 일 목록을 반환
     @EntityGraph(attributePaths = "user")
     @Query(
         "SELECT t FROM Todo t "
@@ -28,6 +30,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
         Pageable pageable
     );
 
+    // 'startsAt'과 'endsAt'으로 범위를 지정하여 수정일 시간을 기준으로 할 일 목록 반환
     @EntityGraph(attributePaths = "user")
     @Query(
         "SELECT t FROM Todo t "
