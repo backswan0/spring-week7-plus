@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.expert.SharedData;
 import org.example.expert.common.config.SecurityConfig;
 import org.example.expert.common.exception.notfound.TodoNotFoundException;
@@ -12,14 +13,18 @@ import org.example.expert.common.filter.JwtFilter;
 import org.example.expert.common.utils.JwtUtil;
 import org.example.expert.domain.todo.dto.response.TodoResponseDto;
 import org.example.expert.domain.todo.service.TodoService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+@Slf4j
 @Import({JwtUtil.class, JwtFilter.class, SecurityConfig.class})
 @WebMvcTest(value = TodoController.class)
 class TodoControllerTest {
@@ -30,9 +35,19 @@ class TodoControllerTest {
     @MockBean
     private TodoService todoService;
 
+    @WithMockUser(username = "test", password = "te$R123%XWst4", roles = {"USER", "ADMIN"})
+    @DisplayName("할 일 단건 조회 - 성공: 유효한 ID로 조회")
     @Test
-    @WithMockUser
     void todo_단건_조회에_성공한다() throws Exception {
+        // log for @WithMockUser
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
+            .getAuthentication().getPrincipal();
+
+        log.info("----------------------------------------------------");
+        log.info("Username: {}", userDetails.getUsername());
+        log.info("GrantedAuthority: {}", userDetails.getAuthorities());
+        log.info("Password: {}", userDetails.getPassword());
+
         // given
         TodoResponseDto responseDto = new TodoResponseDto(
             SharedData.TODO,
@@ -65,8 +80,18 @@ class TodoControllerTest {
     }
 
     @WithMockUser
+    @DisplayName("할 일 단건 조회 - 실패: 존재하지 않는 ID로 조회 시 예외 발생")
     @Test
     void todo_단건_조회_시_todo가_존재하지_않아_예외가_발생한다() throws Exception {
+        // log for @WithMockUser
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
+            .getAuthentication().getPrincipal();
+
+        log.info("----------------------------------------------------");
+        log.info("Username: {}", userDetails.getUsername());
+        log.info("GrantedAuthority: {}", userDetails.getAuthorities());
+        log.info("Password: {}", userDetails.getPassword());
+
         // given
         long todoId = 2L;
 
